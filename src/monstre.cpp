@@ -1,4 +1,4 @@
-#include "monstre.h"
+#include "../include/monstre.hpp"
 
 int getPv(){
 	return this.pv;
