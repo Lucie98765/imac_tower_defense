@@ -2,29 +2,55 @@ CC			= gcc
 CFLAGS	= -Wall -O2 -g
 LDFLAGS	= -lSDL -lGLU -lGL -lm
 
-BINDIR	= bin/
+BIN	= bin/
 SRCDIR	= src/
-OBJDIR	= obj/
+OBJ	= obj/
 
-# Fichiers TD 01
-# Fichiers exercice 03
-OBJ_TD01_EX03= ex03/td01_ex03.o
-EXEC_TD01_EX03= td01_ex03.out
-
-# Fichiers exercice 02
-OBJ_TD01_EX02= ex02/td01_ex02.o
-EXEC_TD01_EX02= td01_ex02.out
+LIB    = -lm
+RM     = rm -f
+DIRNAME = $(shell basename $$PWD)
+BACKUP  = $(shell date +`basename $$PWD`-%m.%d.%H.%M.zip)
+STDNAME = $(DIRNAME).zip
 
 
-# Regles compilation TD 01
+all : $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) $(LIB) -o $(BIN) $(LDFLAGS)
+	@echo "--------------------------------------------------------------"
+	@echo "            to execute type: $(BIN) &"
+	@echo "--------------------------------------------------------------"
 
-all :
 
-ex02 : $(OBJDIR)$(OBJ_TD01_EX02)
-	$(CC) $(CFLAGS) $(OBJDIR)$(OBJ_TD01_EX02) -o $(BINDIR)$(EXEC_TD01_EX02) $(LDFLAGS)
+image.o : src/image.c src/image.h
+	@echo "compile image"
+	$(CC) $(CFLAGS) -c $<  
+	@echo "done..."
 
-ex03 : $(OBJDIR)$(OBJ_TD01_EX03)
-	$(CC) $(CFLAGS) $(OBJDIR)$(OBJ_TD01_EX03) -o $(BINDIR)$(EXEC_TD01_EX03) $(LDFLAGS)
+lut.o : src/lut.c src/lut.h
+	@echo "compile image"
+	$(CC) $(CFLAGS) -c $<  
+	@echo "done..."
+
+list_commands.o : src/list_commands.c src/list_commands.h
+	@echo "compile image"
+	$(CC) $(CFLAGS) -c $<  
+	@echo "done..."
+
+effects.o : src/effects.c src/effects.h
+	@echo "compile image"
+	$(CC) $(CFLAGS) -c $<  
+	@echo "done..."
+
+histo.o : src/histo.c src/histo.h
+	@echo "compile image"
+	$(CC) $(CFLAGS) -c $<  
+	@echo "done..."
+
+main.o : src/main.c image.o lut.o list_commands.o effects.o
+	@echo "compile main"
+	$(CC) $(CFLAGS) -c $<  
+	@echo "done..."
+
+
 
 
 clean :
@@ -36,3 +62,16 @@ clean :
 $(OBJDIR)%.o: $(SRCDIR)%.c
 	mkdir -p `dirname $@`
 	$(CC) -o $@ -c $< $(CFLAGS)
+
+bigclean :
+	@echo "**************************"
+	@echo "BIG CLEAN"
+	@echo "**************************"
+	find . -name '*~' -exec rm -fv {} \;
+	$(RM) *~ $(OBJ) $(BIN)
+
+zip : clean 
+	@echo "**************************"
+	@echo "ZIP"
+	@echo "**************************"
+	cd .. && zip -r $(BACKUP) $(DIRNAME)
