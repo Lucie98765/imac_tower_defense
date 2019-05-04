@@ -1,32 +1,30 @@
 #include "../include/verifCarte.hpp"
 #include <stdlib.h>
 #include <stdio.h>
+#define TAILLE_MAX 1000
 
 
 void ouvrirCarte(char const *nomFichier){
     FILE* carteItd = NULL;
-    int caractereActuel = 0;
+    char chaine[TAILLE_MAX] = "";
 
     carteItd = fopen(nomFichier,"r+");
 
     printf("%s\n", nomFichier);
 
     if (carteItd != NULL)
-    {
-        printf("fichier ouvert\n");
-        
-        // Boucle de lecture des caractères un à un
-        do
+    {        
+        while (fgets(chaine, TAILLE_MAX, carteItd) != NULL) // On lit le fichier tant qu'on ne reçoit pas d'erreur (NULL)
         {
-            caractereActuel = fgetc(carteItd); // On lit le caractère
-            printf("%c", caractereActuel); // On l'affiche
-        } while (caractereActuel != EOF); // On continue tant que fgetc n'a pas retourné EOF (fin de fichier)
-               
+            printf("%s", chaine); // On affiche la chaîne qu'on vient de lire
+        }
+
+        fclose(carteItd);
     }
     else
     {
         // On affiche un message d'erreur si on veut
-        printf("Impossible d'ouvrir le fichier\n");
+        printf("Impossible d'ouvrir le fichier %s\n", nomFichier);
     }
 
 }
