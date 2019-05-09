@@ -1,6 +1,6 @@
 #ifndef VERIFCARTE_HPP
 #define VERIFCARTE_HPP
 
-void ouvrirCarte(char const *nomFichier);
+int verifier_itd(char const *nomFichier);
 
 #endif

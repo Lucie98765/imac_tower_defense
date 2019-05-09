@@ -8,7 +8,7 @@
 int main(int argc, char const *argv[])
 {
 	char const *nomCarte = "data/carte1.itd";
-	ouvrirCarte(nomCarte);
+	verifier_itd(nomCarte);
 
 	return 0;
 }
