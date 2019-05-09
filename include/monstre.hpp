@@ -1,5 +1,5 @@
-#ifndef DEF_MONSTRE
-#define DEF_MONSTRE
+#ifndef MONSTRE_HPP
+#define MONSTRE_HPP
 
 
 class Monstre {

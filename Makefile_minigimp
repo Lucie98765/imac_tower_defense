@@ -1,39 +1,49 @@
-CC			= g++
-CFLAGS	= -Wall -O2 -g
-LDFLAGS	= -lSDL -lGLU -lGL -lm
 
-BIN	= bin/towerDefense.itd
-SRC	= src/
-OBJ	= main.o verifCarte.o
-
+CC     = gcc
+CFLAGS = -Wall -O2 -Wno-unused-result -g
 LIB    = -lm
+OBJ    = main.o image.o lut.o list_commands.o effects.o histo.o
 RM     = rm -f
+BIN    = bin/minigimp
 DIRNAME = $(shell basename $$PWD)
 BACKUP  = $(shell date +`basename $$PWD`-%m.%d.%H.%M.zip)
 STDNAME = $(DIRNAME).zip
 
-
 all : $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) $(LIB) -o $(BIN) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(OBJ) $(LIB) -o $(BIN)
 	@echo "--------------------------------------------------------------"
 	@echo "            to execute type: $(BIN) &"
 	@echo "--------------------------------------------------------------"
 
-
-
-
-verifCarte.o : src/verifCarte.cpp include/verifCarte.hpp
+image.o : src/image.c src/image.h
 	@echo "compile image"
 	$(CC) $(CFLAGS) -c $<  
 	@echo "done..."
 
-main.o : src/main.cpp verifCarte.o
-	@echo "compile main"
+lut.o : src/lut.c src/lut.h
+	@echo "compile image"
 	$(CC) $(CFLAGS) -c $<  
 	@echo "done..."
 
+list_commands.o : src/list_commands.c src/list_commands.h
+	@echo "compile image"
+	$(CC) $(CFLAGS) -c $<  
+	@echo "done..."
 
+effects.o : src/effects.c src/effects.h
+	@echo "compile image"
+	$(CC) $(CFLAGS) -c $<  
+	@echo "done..."
 
+histo.o : src/histo.c src/histo.h
+	@echo "compile image"
+	$(CC) $(CFLAGS) -c $<  
+	@echo "done..."
+
+main.o : src/main.c image.o lut.o list_commands.o effects.o
+	@echo "compile main"
+	$(CC) $(CFLAGS) -c $<  
+	@echo "done..."
 
 clean :	
 	@echo "**************************"
