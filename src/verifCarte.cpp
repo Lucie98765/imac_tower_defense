@@ -48,8 +48,8 @@ int verifier_itd(char const *nomFichier){
             }
             
 
-            // Verification des lignes 3 à 9
-            if(numLigne>=3 && numLigne<=9){ //Il faut maintenant faire les vérifications pour chaque item
+            // Verification des lignes 3 à 8
+            if(numLigne>=3 && numLigne<=8){ //Il faut maintenant faire les vérifications pour chaque item
                 /* Ligne carte */
                 if ((strncmp(chaine, "ca", 2))==0){ //S'il s'agit de la ligne décrivant le nom de la carte
                         char const *nom_carte = NULL;
@@ -75,29 +75,17 @@ int verifier_itd(char const *nomFichier){
                             return 0;
                         }
                         printf("Ligne carte valide.\n");
-                }
-                /* Ligne chemin */
-                if ((strncmp(chaine, "ch", 2))==0){
-                    printf("chemin ok\n");
-                }
-                if ((strncmp(chaine, "no", 2))==0){
-                    printf("noeud ok\n");
-                }
-                if ((strncmp(chaine, "co", 2))==0){
-                    printf("construct ok\n");
-                }
-                if ((strncmp(chaine, "in", 2))==0){
-                    printf("in ok\n");
-                }
-                if ((strncmp(chaine, "ou", 2))==0){
-                    printf("out ok\n");
-                }
-                if ((strncmp(chaine, "en", 2))==0){
-                    printf("energie ok\n");
+                } else { // pour toutes les autres lignes
+                    char mot [20];
+                    int nombre1, nombre2, nombre3;
+                    sscanf (chaine,"%s %d %d %d",mot,&nombre1, &nombre2, &nombre3);
+                    if (nombre1<0 || nombre1>255 || nombre2<0 || nombre2>255 || nombre3<0 || nombre3>255){
+                        printf("Mauvaise(s) valeur(s) pour les couleurs de %s\n", mot);
+                        return 0;
+                    }
+                printf("Ligne %s valide.\n", mot);
                 }
             }
-
-            
         }
 
         fclose(carteItd);
