@@ -10,6 +10,10 @@ int verifier_itd(char const *nomFichier){
     FILE* carteItd = NULL;
     char chaine[TAILLE_MAX] = "";
     int numLigne = 0;
+    int nombre_noeuds = 0;
+    int temp = 0;
+    int indice_noeud = 0;
+    bool presence_entree = false, presence_sortie = false;
 
     carteItd = fopen(nomFichier,"r+");
 
@@ -34,7 +38,7 @@ int verifier_itd(char const *nomFichier){
                     printf("Erreur ligne 1 : mauvais numero de version.\n");
                     return 0;
                 }
-                printf("Ligne 1 valide.\n");
+                //printf("Ligne 1 valide.\n");
             }
 
             
@@ -44,12 +48,12 @@ int verifier_itd(char const *nomFichier){
                     printf("La deuxième ligne de votre fichier .itd n'est pas valide, elle doit être en commentaire.\n");
                     return 0;
                 } 
-                printf("Ligne 2 valide.\n");
+                //printf("Ligne 2 valide.\n");
             }
             
 
-            // Verification des lignes 3 à 9
-            if(numLigne>=3 && numLigne<=9){ //Il faut maintenant faire les vérifications pour chaque item
+            // Verification des lignes 3 à 8
+            if(numLigne>=3 && numLigne<=8){ //Il faut maintenant faire les vérifications pour chaque item
                 /* Ligne carte */
                 if ((strncmp(chaine, "ca", 2))==0){ //S'il s'agit de la ligne décrivant le nom de la carte
                         char const *nom_carte = NULL;
@@ -64,7 +68,7 @@ int verifier_itd(char const *nomFichier){
                                 }
                             }
                         char const *extension = NULL;
-                        extension = strchr(chaine, '.');
+                        extension = strrchr(chaine, '.');
                         if((strncmp(extension, ".ppm", 4))!=0){
                             printf("L'extension de votre carte n'est pas bonne.\n");
                             return 0;
@@ -74,38 +78,97 @@ int verifier_itd(char const *nomFichier){
                             printf("Vous n'avez entré aucun nom de carte.\n");
                             return 0;
                         }
-                        printf("Ligne carte valide.\n");
+                        //printf("Ligne carte valide.\n");
+                } /*else if ((strncmp(chaine, "en", 2))==0){ //Vérification du paramètre énergie
+                    char mot [20];
+                    int nombre;
+                    sscanf (chaine,"%s %d",mot,&nombre);
+                    if (nombre>=1000 || nombre<0){
+                        printf("Mauvaise valeur pour l'énergie, elle doit être comprise entre 0 et 1000.");
+                    }
+                } */ else { // pour toutes les autres lignes
+                    char mot [20];
+                    int nombre1, nombre2, nombre3;
+                    sscanf (chaine,"%s %d %d %d",mot,&nombre1, &nombre2, &nombre3);
+                    if (nombre1<0 || nombre1>255 || nombre2<0 || nombre2>255 || nombre3<0 || nombre3>255){
+                        printf("Mauvaise(s) valeur(s) pour les couleurs de %s\n", mot);
+                        return 0;
+                    }
+                //printf("Ligne %s valide.\n", mot);
                 }
-                /* Ligne chemin */
-                if ((strncmp(chaine, "ch", 2))==0){
-                    printf("chemin ok\n");
-                }
-                if ((strncmp(chaine, "no", 2))==0){
-                    printf("noeud ok\n");
-                }
-                if ((strncmp(chaine, "co", 2))==0){
-                    printf("construct ok\n");
-                }
-                if ((strncmp(chaine, "in", 2))==0){
-                    printf("in ok\n");
-                }
-                if ((strncmp(chaine, "ou", 2))==0){
-                    printf("out ok\n");
-                }
-                if ((strncmp(chaine, "en", 2))==0){
-                    printf("energie ok\n");
+            }
+            
+            //Vérification de la ligne annonçant le nombre de noeuds
+            if(numLigne == 9){
+                char * end;
+                nombre_noeuds = strtol (chaine,&end,10);
+                if (0 == nombre_noeuds){
+                    printf("La ligne 9 est incorrecte. Elle doit être un chiffre ou un nombre strictement positif représentant le nombre de noeuds.\n");
+                    return 0;
+                } else {
+                    temp = nombre_noeuds;
+                    //printf("Ligne nombre de noeuds valide.\n");
                 }
             }
 
-            
+            //Vérification du format des noeuds annoncés au dessus
+            if(numLigne>=10){
+                int n1, n2, n3, n4;
+                sscanf (chaine,"%d %d %d %d",&n1,&n2, &n3, &n4);
+                if (n1!=indice_noeud){
+                    printf("l'indice du %de noeud  est faux, il devrait valoir %d.\n",indice_noeud+1, indice_noeud );
+                    return 0;
+                }
+                if (n2<=0 || n2>4){
+                    printf("La nature du %de noeud est fausse. Elle peut valoir 1(zone d'entrée des monstres), 2(zone de sortie des monstres), 3(coude) ou 4(intersection de chemins).\n", indice_noeud+1);
+                    return 0;
+                }
+                if (n3<0 || n3>800){
+                    printf("La valeur de la première coordonnée du %de noeud est fausse, elle doit être comprise entre 0 et 800.\n",indice_noeud-1 );
+                    return 0;
+                }
+                if (n4<0 || n4>600){
+                    printf("La valeur de la deuxième coordonnée du %de noeud est fausse, elle doit être comprise entre 0 et 600.\n",indice_noeud-1 );
+                    return 0;
+                }
+
+                if (n2==1) presence_entree =true;
+                if (n2==2) presence_sortie =true;
+
+
+                indice_noeud++;
+                temp--;
+            }
+        }
+
+        if (temp!=0){
+            printf("Le nombre de noeuds décrits ne correspond pas au nombre de noeuds prévus.\n");
+            return 0;
+        } else {
+            //printf("Nombre de noeuds en accord avec le chiffre entré en ligne 9.\n");
+        }
+
+        if (!presence_entree){
+            printf("Vous devez inclure au moins une entrée pour les monstres.\n");
+            return 0;
+        }
+        if (!presence_sortie){
+            printf("Vous devez inclure au moins une sortie pour les monstres.\n");
+            return 0;
         }
 
         fclose(carteItd);
     }
-    else
-    {
+    else {
         // On affiche un message d'erreur si on veut
         printf("Impossible d'ouvrir le fichier %s\n", nomFichier);
     }
+    return 1;
+}
+
+
+int verifier_ppm(char const *nom_ppm){
+
+
     return 1;
 }
