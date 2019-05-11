@@ -172,3 +172,7 @@ int verifier_ppm(char const *nom_ppm){
 
     return 1;
 }
+
+void enregistrer_noeud(int x, int y, int type){
+
+}
