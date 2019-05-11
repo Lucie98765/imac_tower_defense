@@ -13,6 +13,7 @@ int verifier_itd(char const *nomFichier){
     int nombre_noeuds = 0;
     int temp = 0;
     int indice_noeud = 0;
+    bool presence_entree = false, presence_sortie = false;
 
     carteItd = fopen(nomFichier,"r+");
 
@@ -37,7 +38,7 @@ int verifier_itd(char const *nomFichier){
                     printf("Erreur ligne 1 : mauvais numero de version.\n");
                     return 0;
                 }
-                printf("Ligne 1 valide.\n");
+                //printf("Ligne 1 valide.\n");
             }
 
             
@@ -47,7 +48,7 @@ int verifier_itd(char const *nomFichier){
                     printf("La deuxième ligne de votre fichier .itd n'est pas valide, elle doit être en commentaire.\n");
                     return 0;
                 } 
-                printf("Ligne 2 valide.\n");
+                //printf("Ligne 2 valide.\n");
             }
             
 
@@ -77,7 +78,7 @@ int verifier_itd(char const *nomFichier){
                             printf("Vous n'avez entré aucun nom de carte.\n");
                             return 0;
                         }
-                        printf("Ligne carte valide.\n");
+                        //printf("Ligne carte valide.\n");
                 } /*else if ((strncmp(chaine, "en", 2))==0){ //Vérification du paramètre énergie
                     char mot [20];
                     int nombre;
@@ -93,7 +94,7 @@ int verifier_itd(char const *nomFichier){
                         printf("Mauvaise(s) valeur(s) pour les couleurs de %s\n", mot);
                         return 0;
                     }
-                printf("Ligne %s valide.\n", mot);
+                //printf("Ligne %s valide.\n", mot);
                 }
             }
             
@@ -106,7 +107,7 @@ int verifier_itd(char const *nomFichier){
                     return 0;
                 } else {
                     temp = nombre_noeuds;
-                    printf("Ligne nombre de noeuds valide.\n");
+                    //printf("Ligne nombre de noeuds valide.\n");
                 }
             }
 
@@ -123,9 +124,16 @@ int verifier_itd(char const *nomFichier){
                     return 0;
                 }
                 if (n3<0 || n3>800){
-                    printf("La valeur de la première coordonnée du %de noeud est fausse, elle doit être comrpise entre 0 et 800.\n",indice_noeud-1 );
+                    printf("La valeur de la première coordonnée du %de noeud est fausse, elle doit être comprise entre 0 et 800.\n",indice_noeud-1 );
                     return 0;
                 }
+                if (n4<0 || n4>600){
+                    printf("La valeur de la deuxième coordonnée du %de noeud est fausse, elle doit être comprise entre 0 et 600.\n",indice_noeud-1 );
+                    return 0;
+                }
+
+                if (n2==1) presence_entree =true;
+                if (n2==2) presence_sortie =true;
 
 
                 indice_noeud++;
@@ -137,7 +145,16 @@ int verifier_itd(char const *nomFichier){
             printf("Le nombre de noeuds décrits ne correspond pas au nombre de noeuds prévus.\n");
             return 0;
         } else {
-            printf("Nombre de noeuds en accord avec le chiffre entré en ligne 9.\n");
+            //printf("Nombre de noeuds en accord avec le chiffre entré en ligne 9.\n");
+        }
+
+        if (!presence_entree){
+            printf("Vous devez inclure au moins une entrée pour les monstres.\n");
+            return 0;
+        }
+        if (!presence_sortie){
+            printf("Vous devez inclure au moins une sortie pour les monstres.\n");
+            return 0;
         }
 
         fclose(carteItd);
@@ -146,5 +163,12 @@ int verifier_itd(char const *nomFichier){
         // On affiche un message d'erreur si on veut
         printf("Impossible d'ouvrir le fichier %s\n", nomFichier);
     }
+    return 1;
+}
+
+
+int verifier_ppm(char const *nom_ppm){
+
+
     return 1;
 }
