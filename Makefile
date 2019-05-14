@@ -19,7 +19,7 @@ all : $(OBJ)
 	@echo "--------------------------------------------------------------"
 
 
-$(OBJDIR)verifCarte.o : ./src/verifCarte.cpp ./include/verifCarte.h
+$(OBJDIR)verifCarte.o : ./src/verifCarte.cpp ./include/verifCarte.hpp
 	@echo "compile carte"
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
