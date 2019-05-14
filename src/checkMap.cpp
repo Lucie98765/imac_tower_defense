@@ -141,6 +141,7 @@ int check_itd(char const *nameFile){
             }
         }
 
+
         if (temp!=0){
             printf("The number of nodes actually described does not match the announced number of nodes.\n");
             return 0;
@@ -157,9 +158,12 @@ int check_itd(char const *nameFile){
             return 0;
         }
 
+
+        printf("Itd map is valid.\n");
+        
         fclose(itdMap);
-    }
-    else {
+
+    } else {
         //Error openning the file
         printf("File %s cannot be openned.\n", nameFile);
     }

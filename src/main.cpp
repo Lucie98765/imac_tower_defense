@@ -11,7 +11,10 @@ int main(int argc, char const *argv[])
 
 
 	int itd_ok = check_itd(itd_map_name);
-	if (itd_ok == 0) return 0;
+	if (itd_ok == 0){
+		printf("Error while reading itd file, programm is over.\n");
+		return 0;
+	} 
 
 
 	//verifier_ppm
