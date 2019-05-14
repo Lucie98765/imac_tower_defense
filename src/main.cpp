@@ -1,4 +1,4 @@
-#include "../include/verifCarte.hpp"
+#include "../include/checkMap.hpp"
 #include "../include/tower.h"
 #include "../include/batiment.h"
 #include "../include/headers.h"
@@ -6,12 +6,15 @@
 
 int main(int argc, char const *argv[])
 {
-	char const *nom_carte_itd = "data/carte1.itd";
-	char const *nom_carte_ppm = "images/carte1.ppm";
+	char const *itd_map_name = "data/carte1.itd";
+	char const *ppm_map_name = "images/carte1.ppm";
 
 
-	int itd_ok = verifier_itd(nom_carte_itd);
-	if (itd_ok == 0) return 0;
+	int itd_ok = check_itd(itd_map_name);
+	if (itd_ok == 0){
+		printf("Error while reading itd file, programm is over.\n");
+		return 0;
+	} 
 
 
 	//verifier_ppm

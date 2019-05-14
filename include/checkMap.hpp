@@ -1,5 +1,5 @@
-#ifndef VERIFCARTE_HPP
-#define VERIFCARTE_HPP
+#ifndef CHECKMAP_HPP
+#define CHECKMAP_HPP
 
 
 typedef struct Noeud{ /* faire une classe, reprendre classe node c++ */
@@ -10,8 +10,8 @@ typedef struct Noeud{ /* faire une classe, reprendre classe node c++ */
 } Noeud;
 
 
-int verifier_itd(char const *nomFichier);
-int verifier_ppm(char const *nom_ppm);
+int check_itd(char const *nameFile);
+int check_ppm(char const *ppmName);
 
 
 

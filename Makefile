@@ -5,8 +5,8 @@ LIB    = -lm
 LDFLAGS	= -lSDL -lGLU -lGL -lm
 SRCDIR		=	./src/
 OBJDIR		=	./obj/
-BIN	= ./bin/maint.out
-OBJ    = ./obj/main.o ./obj/verifCarte.o ./obj/entity.o ./obj/monster.o ./obj/tower.o ./obj/batiment.o ./obj/timer.o
+BIN	= ./bin/ImacTowerDefense
+OBJ    = ./obj/main.o ./obj/checkMap.o ./obj/entity.o ./obj/monster.o ./obj/tower.o ./obj/batiment.o ./obj/timer.o
 RM     = rm -f
 DIRNAME = $(shell basename $$PWD)
 BACKUP  = $(shell date +`basename $$PWD`-%m.%d.%H.%M.zip)
@@ -19,7 +19,7 @@ all : $(OBJ)
 	@echo "--------------------------------------------------------------"
 
 
-$(OBJDIR)verifCarte.o : ./src/verifCarte.cpp ./include/verifCarte.hpp
+$(OBJDIR)checkMap.o : ./src/checkMap.cpp ./include/checkMap.hpp
 	@echo "compile carte"
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
@@ -50,7 +50,7 @@ $(OBJDIR)timer.o : ./src/timer.cpp ./include/timer.h
 	@echo "done..."
 
 
-$(OBJDIR)main.o : ./src/main.cpp $(OBJDIR)verifCarte.o $(OBJDIR)entity.o $(OBJDIR)monster.o $(OBJDIR)tower.o $(OBJDIR)batiment.o $(OBJDIR)timer.o
+$(OBJDIR)main.o : ./src/main.cpp $(OBJDIR)checkMap.o $(OBJDIR)entity.o $(OBJDIR)monster.o $(OBJDIR)tower.o $(OBJDIR)batiment.o $(OBJDIR)timer.o
 	@echo "compile main"
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
