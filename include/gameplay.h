@@ -1,5 +1,3 @@
-
-
 #include "headers.h"
 #include "entity.h"
 #include "tower.h"

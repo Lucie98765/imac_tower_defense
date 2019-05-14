@@ -3,21 +3,21 @@
 
 
 
-//constructeur
+//constructor
 
 Tower::Tower() : Entity(){};
 
 Tower::Tower(int tower_x, int tower_y) : Entity(tower_x, tower_y) {
 }
 
-//surcharge constructeur
-Tower::Tower(int tower_x, int tower_y, TYPE_TOWER type, float puissance, float portee, float cadence, int prix): 
+//overload constructor
+Tower::Tower(int tower_x, int tower_y, TYPE_TOWER type, float power, float scope, float cadence, int price): 
     Entity(tower_x, tower_y),
     type(type),
-    puissance(puissance),
-    portee(portee),
+    power(power),
+    scope(scope),
     cadence(cadence),
-    prix(prix),
+    price(price),
     rayon(20)
     {
 
@@ -30,20 +30,20 @@ TYPE_TOWER Tower::get_type_tower() {
     return type;
 }
 
-float Tower::get_puissance() {
-    return puissance;
+float Tower::get_power() {
+    return power;
 }
 
 float Tower::get_cadence() {
     return cadence;
 }
 
-float Tower::get_portee() {
-    return portee;
+float Tower::get_scope() {
+    return scope;
 }
 
-int Tower::get_prix() {
-    return prix;
+int Tower::get_price() {
+    return price;
 }
 
 int Tower::get_rayon() {
@@ -51,40 +51,40 @@ int Tower::get_rayon() {
 }
 
 //setters
-void Tower::set_puissance(float value) {
-    puissance = value;
+void Tower::set_power(float value) {
+    power = value;
 }
 
 void Tower::set_cadence(float value) {
     cadence = value;
 }
 
-void Tower::set_portee(float value) {
-    portee = value;
+void Tower::set_scope(float value) {
+    scope = value;
 }
 
-void Tower::set_prix(int value) {
-    prix = value;
+void Tower::set_price(int value) {
+    price = value;
 }
 
 
-//destructeur
+//destructor
 Tower::~Tower(){};
 
 //methodes
-void Tower::tirer(int puissance, Monster monster, TYPE_TOWER type) {
-    int portee_x_inf = Tower::get_x() - (int)Tower::get_portee();
-    int portee_x_sup = Tower::get_x() + (int)Tower::get_portee();
-    int portee_y_inf = Tower::get_y() - (int)Tower::get_portee();
-    int portee_y_sup = Tower::get_y() + (int)Tower::get_portee();
-    if ( (monster.get_x() < portee_x_sup) && (monster.get_x() > portee_x_inf)
-        && (monster.get_y() < portee_y_sup) && (monster.get_y() > portee_y_sup) )
+void Tower::tirer(int power, Monster monster, TYPE_TOWER type) {
+    int scope_x_inf = Tower::get_x() - (int)Tower::get_scope();
+    int scope_x_sup = Tower::get_x() + (int)Tower::get_scope();
+    int scope_y_inf = Tower::get_y() - (int)Tower::get_scope();
+    int scope_y_sup = Tower::get_y() + (int)Tower::get_scope();
+    if ( (monster.get_x() < scope_x_sup) && (monster.get_x() > scope_x_inf)
+        && (monster.get_y() < scope_y_sup) && (monster.get_y() > scope_y_sup) )
     {
         switch (type)
         {
             case ROCKET:
             {      
-                float result_degats = monster.get_Pv() - monster.get_resistance_tr() * Tower::get_puissance();
+                float result_degats = monster.get_Pv() - monster.get_resistance_tr() * Tower::get_power();
                 if (result_degats>0) {
                     monster.set_Pv(result_degats);
                 }
@@ -96,7 +96,7 @@ void Tower::tirer(int puissance, Monster monster, TYPE_TOWER type) {
             
             case LASER:
             {   
-                float result_degats = monster.get_Pv() - monster.get_resistance_tv() * Tower::get_puissance();
+                float result_degats = monster.get_Pv() - monster.get_resistance_tg() * Tower::get_power();
                 if (result_degats>0) {
                     monster.set_Pv(result_degats);
                 }
@@ -108,7 +108,7 @@ void Tower::tirer(int puissance, Monster monster, TYPE_TOWER type) {
             
             case MACHINEGUN:
             {   
-                float result_degats = monster.get_Pv() - monster.get_resistance_tj() * Tower::get_puissance();
+                float result_degats = monster.get_Pv() - monster.get_resistance_ty() * Tower::get_power();
                 if (result_degats>0) {
                     monster.set_Pv(result_degats);
                 }
@@ -120,7 +120,7 @@ void Tower::tirer(int puissance, Monster monster, TYPE_TOWER type) {
 
             case HYBRID:
             {   
-                float result_degats = monster.get_Pv() - monster.get_resistance_tb() * Tower::get_puissance();
+                float result_degats = monster.get_Pv() - monster.get_resistance_tb() * Tower::get_power();
                 if (result_degats>0) {
                     monster.set_Pv(result_degats);
                 }

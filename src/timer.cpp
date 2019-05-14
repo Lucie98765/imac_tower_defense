@@ -1,6 +1,6 @@
 #include "../include/timer.h"
 
-// constructeur
+// constructor
     Timer::Timer()
     {
         startTicks = 0;
@@ -10,10 +10,10 @@
         started = false;
     }
     
-//destructeur
+//destructor
     Timer::~Timer() {}
 
-//méthodes
+//methods
     void Timer::start()
     {
         started = true;

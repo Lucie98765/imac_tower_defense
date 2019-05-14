@@ -25,50 +25,50 @@ class Tower : public Entity
 {
   private:
     TYPE_TOWER type;
-    float puissance;
-    float portee;
+    float power;
+    float scope;
     float cadence;
-    int prix;
+    int price;
     int rayon;
     GLuint texture;
     //Monster cible;
 
   public:
-    //construteur
+    //constructor
     Tower();
 
-    //surcharge
+    //overload
     Tower(int tower_x, int tower_y);
 
-    //destructeur
+    //destructor
     ~Tower();
 
-    //surcharge constructeur
-    Tower(int tower_x, int tower_y, TYPE_TOWER type, float puissance, float portee, float cadence, int prix);
+    //overload constructor
+    Tower(int tower_x, int tower_y, TYPE_TOWER type, float power, float scope, float cadence, int price);
 
     //getter
     TYPE_TOWER get_type_tower();
-    float get_puissance();
+    float get_power();
     float get_cadence();
-    float get_portee();
-    int get_prix();
+    float get_scope();
+    int get_price();
     int get_rayon();
 
     //setter
-    void set_puissance(float value);
+    void set_power(float value);
     void set_cadence(float value);
-    void set_portee(float value);
-    void set_prix(int value);
+    void set_scope(float value);
+    void set_price(int value);
     void set_position(int value_x, int value_y);
 
     //other method
-    void tirer(int puissance, Monster monster, TYPE_TOWER type);
+    void tirer(int power, Monster monster, TYPE_TOWER type);
 
     //PARTIE SDL VISUELLE à voir...
 
     
 };
 
-void create_tower(int coord_x, int coord_y, Tower *new_tower);
+void create_tower(int coord_x, int coord_y, Tower new_tower);
 
 #endif

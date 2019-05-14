@@ -7,16 +7,16 @@
 #include "../include/entity.h"
 
 
-//contructeur
+//contructor
 
 	Entity::Entity() {};
 
-//surcharge
+//overload
 	Entity::Entity(float x, float y):coord_x(x), coord_y(y) 
 		{
 	};
 
-//destructeur
+//destructorr
 	Entity::~Entity() {};
 
 /* void Entity::update() {

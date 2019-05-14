@@ -1,14 +1,14 @@
 #include "../include/monster.h"
 
 
-//constructeur
+//constructor
     Monster::Monster() : Entity() {
     };
 
-// surcharge
+// Overload
     Monster::Monster(int x, int y): Entity(x,y){};
 
-//destructeur
+//destructor
 	Monster::~Monster() {};
 
 //getters
@@ -20,54 +20,54 @@
         return pv;
     }
 
-    float Monster::get_vitesse(){
-        return vitesse;
+    float Monster::get_speed(){
+        return speed;
     }
 
     float Monster::get_resistance_tr() {
         return resistance_tr;
     }
 
-    float Monster::get_resistance_tv() {
-        return resistance_tv;
+    float Monster::get_resistance_tg() {
+        return resistance_tg;
     };
+
+    float Monster::get_resistance_ty() {
+        return resistance_ty;
+    }
 
     float Monster::get_resistance_tb() {
         return resistance_tb;
     }
 
-    float Monster::get_resistance_tj() {
-        return resistance_tj;
-    }
-
 
 //setters
-    void Monster::set_level(int nvlevel) {
-        level = nvlevel;
+    void Monster::set_level(int nwlevel) {
+        level = nwlevel;
     }
 
-    void Monster::set_Pv(float nvxPv) {
-        pv = nvxPv;
+    void Monster::set_Pv(float nwPv) {
+        pv = nwPv;
     }
 
-    void Monster::set_vitesse(float nvlvitesse) {
-        vitesse = nvlvitesse;
+    void Monster::set_speed(float nwspeed) {
+        speed = nwspeed;
     }
 
-    void Monster::set_resistance_tr(float nvlResistance) {
-        resistance_tr = nvlResistance;
+    void Monster::set_resistance_tr(float nwResistance) {
+        resistance_tr = nwResistance;
     }
 
-    void Monster::set_resistance_tv(float nvlResistance) {
-        resistance_tv = nvlResistance;
+    void Monster::set_resistance_tg(float nwResistance) {
+        resistance_tg = nwResistance;
     }
 
-    void Monster::set_resistance_tb(float nvlResistance) {
-        resistance_tb = nvlResistance;
+    void Monster::set_resistance_ty(float nwResistance) {
+        resistance_ty = nwResistance;
     }
 
-    void Monster::set_resistance_tj(float nvlResistance) {
-        resistance_tj = nvlResistance;
+    void Monster::set_resistance_tb(float nwResistance) {
+        resistance_tb = nwResistance;
     }
 
 //void Monster::seDeplacer(int move_x, int move_y) {
@@ -79,11 +79,11 @@
     //calculer le chemin le plus court en distance et en temps
     //choisir en conséquence
 
-    void Monster::seDeplacer(int xAct, int yAct) {
+    void Monster::move(int xAct, int yAct) {
 
     };
 	
-    void Monster::jauge_Pv() {
+    void Monster::gauge_Pv() {
         int subdiv = get_Pv();
     };
 //};

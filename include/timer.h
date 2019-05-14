@@ -16,13 +16,13 @@ class Timer
 
 
 	public:
-		//constructeur
+		//constructor
 		Timer();
 
-		//destructeur
+		//destructor
 		~Timer();
 
-		//méthodes
+		//methods
 		void start();
 		void pause();
 		void unpause();

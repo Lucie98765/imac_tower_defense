@@ -17,7 +17,7 @@ int main(int argc, char const *argv[])
 	//verifier_ppm
 
 	Tower newtower(4,5,ROCKET,8.0,2.0,3.0,6);
-    printf("%f",newtower.get_puissance());
+    printf("%f",newtower.get_power());
 
 
 

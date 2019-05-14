@@ -1,40 +1,40 @@
 #include "../include/batiment.h"
 
-//constructeur
+//constructor
 
 Installation::Installation() : Entity() {};
 
-//surcharge
+//overload1
 Installation::Installation(int installation_x, int installation_y) :
     Entity(installation_x, installation_y)
 {};
 
-//surcharge constructeur
-Installation::Installation(int installation_x, int installation_y, TYPE_INSTALL type, int prix) : 
+//overload2
+Installation::Installation(int installation_x, int installation_y, TYPE_INSTALL type, int price) : 
     Entity(installation_x, installation_y),
     type(type),
-    prix(prix),
-    taille(20){
+    price(price),
+    size(20){
 };
 
-//destructeur
+//destructor
 Installation::~Installation() {};
 
 
-//getters (pas de setters, on n'améliore pas les installatoins)
-int Installation::get_taille()
+//getters (no need setters)
+int Installation::get_size()
 {
-    return taille;
+    return size;
 }
 
-int Installation::get_prix()
+int Installation::get_price()
 {
-    return prix;
+    return price;
 }
 
-int Installation::get_portee()
+int Installation::get_scope()
 {
-    return portee;
+    return scope;
 }
 
 // int Installation::get_position_x()
@@ -48,29 +48,29 @@ int Installation::get_portee()
 // }
 
 
-//méthodes
-void Installation::amelioration(TYPE_INSTALL type, Tower tour)
+//methods
+void Installation::amelioration(TYPE_INSTALL type, Tower tower)
 {
     switch (type)
     {
     case RADAR:
     {
-        float new_value = 1.25 * tour.get_portee();
-        tour.set_portee(new_value);
+        float new_value = 1.25 * tower.get_scope();
+        tower.set_scope(new_value);
         break;
     }
 
-    case USINE_ARMEMENT:
+    case FACTORY_ARMAMENT:
     {
-        float new_value = 1.25 * tour.get_puissance();
-        tour.set_puissance(new_value);
+        float new_value = 1.25 * tower.get_power();
+        tower.set_power(new_value);
         break;
     }
 
     case STOCK_MUNITIONS:
     {
-        float new_value = 1.25 * tour.get_cadence();
-        tour.set_cadence(new_value);
+        float new_value = 1.25 * tower.get_cadence();
+        tower.set_cadence(new_value);
         break;
     }
 

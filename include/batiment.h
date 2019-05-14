@@ -7,43 +7,44 @@
 #include "timer.h"
 
 
+//To make the difference between installation
 enum TYPE_INSTALL {
     RADAR,
-    USINE_ARMEMENT,
+    FACTORY_ARMAMENT,
     STOCK_MUNITIONS
 };
 
-//classe installation
+//class installation
 
 class Installation : public Entity
 {
     private:
     TYPE_INSTALL type;
-    int taille;
-    int prix;
-    float portee;
+    int size;
+    int price;
+    float scope;
 
     public:
 
-    //constructeur
+    //constructor
     Installation();
 
-    //surcharge
+    //Overload1
     Installation(int installation_x, int installation_y);
 
-    //surcharge constructeur;
-    Installation(int installation_x, int installation_y, TYPE_INSTALL type, int prix);
+    //Overload2
+    Installation(int installation_x, int installation_y, TYPE_INSTALL type, int price);
 
-    //destructeur
+    //destructor
     ~Installation();
 
-    //getters (pas de setters, on n'améliore pas les installatoins)
-    int get_taille();
-    int get_prix();
-    int get_portee();
+    //getters (no need setters)
+    int get_size();
+    int get_price();
+    int get_scope();
 
     //other methods
-    void amelioration(TYPE_INSTALL type,Tower tour);
+    void amelioration(TYPE_INSTALL type,Tower tower);
 
 
     //PARTIE SDL VISUEL à voir...
