@@ -1,14 +1,10 @@
 #ifndef TOWER_H
 #define TOWER_H
 
-#include <SDL/SDL.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <cstdio>
-#include <cstdlib>
+#include "headers.h"
 #include "entity.h"
 #include "monster.h"
-#include <new>
+#include "timer.h"
 
 // void *operator new(size_t size) { return malloc(size); }
 // void operator delete(void *ptr)
@@ -39,12 +35,19 @@ class Tower : public Entity
 
   public:
     //construteur
+    Tower();
+
+    //surcharge
     Tower(int tower_x, int tower_y);
+
+    //destructeur
+    ~Tower();
 
     //surcharge constructeur
     Tower(int tower_x, int tower_y, TYPE_TOWER type, float puissance, float portee, float cadence, int prix);
 
     //getter
+    TYPE_TOWER get_type_tower();
     float get_puissance();
     float get_cadence();
     float get_portee();
@@ -59,9 +62,11 @@ class Tower : public Entity
     void set_position(int value_x, int value_y);
 
     //other method
-    //void tirer(int puissance, Monster monster);
+    void tirer(int puissance, Monster monster, TYPE_TOWER type);
 
-    //PARTIE SDL VISUEL à voir...
+    //PARTIE SDL VISUELLE à voir...
+
+    
 };
 
 void create_tower(int coord_x, int coord_y, Tower *new_tower);

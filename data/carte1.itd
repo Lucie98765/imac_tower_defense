@@ -1,6 +1,7 @@
 @ITD 1
 # premiere ligne de commentaire
 carte ./data/carte1.ppm
+energie 100
 chemin 194 134 76
 noeud 0 0 0
 construct 65 136 68

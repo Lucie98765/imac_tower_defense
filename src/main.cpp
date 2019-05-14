@@ -35,3 +35,6 @@ int main(int argc, char const *argv[])
 
 	return 1;
 }
+#include "../include/headers.h"
+#include "../include/tower.h"
+#include "../include/batiment.h"

@@ -6,9 +6,18 @@
 #include <cstdio>
 #include "../include/entity.h"
 
-Entity::Entity(float x, float y):coord_x(x), coord_y(y) 
-	{
-};
+
+//contructeur
+
+	Entity::Entity() {};
+
+//surcharge
+	Entity::Entity(float x, float y):coord_x(x), coord_y(y) 
+		{
+	};
+
+//destructeur
+	Entity::~Entity() {};
 
 /* void Entity::update() {
 	glColor4f(255, 0, 0, 1);
@@ -19,20 +28,21 @@ Entity::Entity(float x, float y):coord_x(x), coord_y(y)
 	glPointSize(1.0f);
 } */
 
-int Entity::get_x() {
-	return coord_x;
-};
+//getters
+	int Entity::get_x() {
+		return coord_x;
+	};
 
-int Entity::get_y() {
-	return coord_y;
-};
+	int Entity::get_y() {
+		return coord_y;
+	};
 
+//setters
+	void Entity::set_X(int x) {
+		coord_x = x;
+	};
 
-void Entity::set_X(int x) {
-    coord_x = x;
-};
-
-void Entity::set_Y(int y) {
-    coord_y=y;
-};
+	void Entity::set_Y(int y) {
+		coord_y=y;
+	};
 
