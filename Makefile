@@ -20,7 +20,12 @@ all : $(OBJ)
 
 
 $(OBJDIR)checkMap.o : ./src/checkMap.cpp ./include/checkMap.hpp
-	@echo "compile carte"
+	@echo "compile map"
+	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
+	@echo "done..."
+
+$(OBJDIR)node.o : ./src/node.cpp ./include/node.hpp
+	@echo "compile node"
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
 
