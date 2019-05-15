@@ -28,7 +28,7 @@ int check_itd(char const *nameFile){
 
             //Check of the first lign of the file
             if(numLign == 1){
-                if ((strncmp(sentence, "@ITD ", 5))!=0){ //We check that the first characters describe an itd file
+                if ((strncmp(sentence, "@ITD ", 5))!=0){ //We check that the 5 first characters describe an itd file
                     printf("Error lign 1 : the first lign of your .itd file is not valid, the file doesn't seem to be an ITD format.\n");
                     fclose(itdMap);
                     return 0;
