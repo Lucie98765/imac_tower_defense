@@ -1,7 +1,7 @@
 
 CC     = g++
 CFLAGS = -Wall -O2 -Wno-unused-result -g
-LIB    = -lm
+LIB    = -lm -lSDL_image
 LDFLAGS	= -lSDL -lGLU -lGL -lm
 SRCDIR		=	./src/
 OBJDIR		=	./obj/
@@ -20,7 +20,12 @@ all : $(OBJ)
 
 
 $(OBJDIR)checkMap.o : ./src/checkMap.cpp ./include/checkMap.hpp
-	@echo "compile carte"
+	@echo "compile map"
+	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
+	@echo "done..."
+
+$(OBJDIR)node.o : ./src/node.cpp ./include/node.hpp
+	@echo "compile node"
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
 
