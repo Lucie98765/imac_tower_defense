@@ -106,12 +106,7 @@ int check_itd(char const *nameFile){
                         fclose(itdMap);
                         return 0;
                     }
-                    //revoir ça 
-                    if ((strncmp(sentence, "ch", 2))==0){
-                        char* chainelol = sprintf(chainelol, "%d %d %d", number1, number2, number3);
-                        strcat(path_color, chainelol);
-                        printf("%s\n", path_color);
-                    }
+                    
                 //printf("%s Line valid.\n", word);
                 }
             }
@@ -157,7 +152,6 @@ int check_itd(char const *nameFile){
 
                 if (n2==1) entrance =true;
                 if (n2==2) exit =true;
-
 
                 nodeIndex++;
                 temp--;
