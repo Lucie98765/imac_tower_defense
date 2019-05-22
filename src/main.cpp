@@ -161,16 +161,16 @@ int main(int argc, char const *argv[])
             glBegin(GL_QUADS);
         
             glTexCoord2f(0, 1);
-            glVertex2f(-50., -50.);
+            glVertex2f(-133., -100.);
         
             glTexCoord2f(1, 1);
-            glVertex2f(50., -50.);
+            glVertex2f(133., -100.);
         
             glTexCoord2f(1, 0);
-            glVertex2f(50., 50.);
+            glVertex2f(133., 100.);
         
             glTexCoord2f(0, 0);
-            glVertex2f(-50., 50.);
+            glVertex2f(-133., 100.);
 
             glEnd();
 
