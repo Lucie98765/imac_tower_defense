@@ -62,10 +62,23 @@ void reshape(SDL_Surface** surface, unsigned int width, unsigned int height)
 }
 
 
-
-
-int main(int argc, char const *argv[])
+void drawSquare(unsigned int x, unsigned int y) 
 {
+    
+    glBegin(GL_TRIANGLE_FAN);
+    
+    glVertex2f(0.0, 0.0);
+    glVertex2f( x+15 , y-15);
+    glVertex2f( x+15 , y+15);
+    glVertex2f( x-15 , y+15);
+    glVertex2f( x-15 , y-15);
+    glVertex2f( x+15 , y-15);
+
+    glEnd();
+}
+
+
+int main(int argc, char const *argv[]) {
 	char const *itd_map_name = "data/carte1.itd";
 	//char const *ppm_map_name = "images/carte1.ppm";
 
@@ -75,6 +88,9 @@ int main(int argc, char const *argv[])
 		printf("Error while reading itd file, programm is over.\n");
 		return 0;
 	} 
+
+
+    unsigned int x_mouse = 0, y_mouse = 0;
 
 
 	//verifier_ppm
@@ -176,10 +192,15 @@ int main(int argc, char const *argv[])
 
         glPopMatrix();
 
-
         glBindTexture(GL_TEXTURE_2D, 0);
         
         glDisable(GL_TEXTURE_2D);
+
+
+        glPushMatrix();
+            drawSquare(x_mouse, y_mouse);
+            //drawSquare();
+        glPopMatrix();
         
         /* Echange du front et du back buffer : mise a jour de la fenetre */
         SDL_GL_SwapBuffers();
@@ -208,7 +229,8 @@ int main(int argc, char const *argv[])
 				loop = 0; 
 				break;
 			}
-            
+
+
             /* Quelques exemples de traitement d'evenements : */
             switch(e.type) 
             {
@@ -225,9 +247,17 @@ int main(int argc, char const *argv[])
                 case SDL_KEYDOWN:
                     printf("touche pressee (code = %d)\n", e.key.keysym.sym);
                     break;
+
+
+
+                case SDL_MOUSEMOTION:
+                    x_mouse = e.motion.x;
+                    y_mouse = e.motion.y;
+
                     
                 default:
                     break;
+
             }
         }
 
