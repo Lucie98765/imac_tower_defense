@@ -2,6 +2,7 @@
 #define CHECKMAP_HPP
 
 
+<<<<<<< HEAD
 typedef struct Noeud{ /* faire une classe, reprendre classe node c++ */
   int pos_x;
   int pos_y;
@@ -10,8 +11,12 @@ typedef struct Noeud{ /* faire une classe, reprendre classe node c++ */
 } Noeud;
 
 
+=======
+>>>>>>> master
 int check_itd(char const *nameFile);
 int check_ppm(char const *ppmName);
+
+
 
 
 

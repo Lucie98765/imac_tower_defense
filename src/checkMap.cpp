@@ -4,12 +4,19 @@
 #include <cstring>
 #include <ctype.h>
 #define MAX_SIZE 1000
+#define SIZE_COLOR_TAB 12
+
+char path_color[SIZE_COLOR_TAB] = "";
+char node_color[SIZE_COLOR_TAB] = "";
+char construct_color[SIZE_COLOR_TAB] = "";
+char in_color[SIZE_COLOR_TAB] = "";
+char out_color[SIZE_COLOR_TAB] = "";
 
 
 int check_itd(char const *nameFile){
     FILE* itdMap = NULL;
     char sentence[MAX_SIZE] = "";
-    int numLign = 0;
+    int numLine = 0;
     int nodeNumber = 0;
     int temp = 0;
     int nodeIndex = 0;
@@ -23,9 +30,10 @@ int check_itd(char const *nameFile){
     {        
         while (fgets(sentence, MAX_SIZE, itdMap) != NULL) //We read the file until we have an error --> until the file ends (NULL)
         {
-            numLign++;
+            numLine++;
             printf("%s", sentence); //We display the sentence we just read
 
+<<<<<<< HEAD
             //Check of the first lign of the file
             if(numLign == 1){
                 char debut_ligne[6];
@@ -36,22 +44,43 @@ int check_itd(char const *nameFile){
                 }
                 if (isdigit(sentence[5]) == false){ //We check the version number of the file
                     printf("Error lign 1 : bad version number.\n");
+=======
+            //Check of the first Line of the file
+            if(numLine == 1){
+                if ((strncmp(sentence, "@ITD ", 5))!=0){ //We check that the 5 first characters describe an itd file
+                    printf("Error Line 1 : the first Line of your .itd file is not valid, the file doesn't seem to be an ITD format.\n");
+                    fclose(itdMap);
                     return 0;
                 }
-                //printf("Lign 1 valid.\n");
+                if (isdigit(sentence[5]) == false){ //We check the version number of the file
+                    printf("Error Line 1 : bad version number.\n");
+                    fclose(itdMap);
+>>>>>>> master
+                    return 0;
+                }
+                //printf("Line 1 valid.\n");
             }
 
             
+<<<<<<< HEAD
             //Check of the second lign of the file
             if(numLign == 2){
                 if (sentence[0]!='#'){ //Checking it is a commentary lign
                     printf("The second lign of your itd file is not valid, it has to be a commentary.\n");
+=======
+            //Check of the second Line of the file
+            if(numLine == 2){
+                if (sentence[0]!='#'){ //Checking it is a commentary Line
+                    printf("The second Line of your itd file is not valid, it has to be a commentary.\n");
+                    fclose(itdMap);
+>>>>>>> master
                     return 0;
                 } 
-                //printf("Lign 2 valid.\n");
+                //printf("Line 2 valid.\n");
             }
             
 
+<<<<<<< HEAD
             //Checking ligns 3 to 8
             if(numLign>=3 && numLign<=8){ //We now have to check every item
                 /* Map lign */
@@ -59,6 +88,15 @@ int check_itd(char const *nameFile){
                         char const *nom_carte = NULL;
                         nom_carte = strchr(sentence, ' ');
                         if (nom_carte  != NULL) //If the map name is correctly written
+=======
+            //Checking Lines 3 to 8
+            if(numLine>=3 && numLine<=8){ //We now have to check every item
+                /* Map Line */
+                if ((strncmp(sentence, "ca", 2))==0){ //If it is the Line describing the map name
+                        char const *mapName = NULL;
+                        mapName = strchr(sentence, ' ');
+                        if (mapName  != NULL) //If the map name is correctly written
+>>>>>>> master
                         {
                             int taille_nom = (int)strlen(nom_carte);
                             for (int i = 1; i<taille_nom; i++){
@@ -78,7 +116,7 @@ int check_itd(char const *nameFile){
                             printf("You have enter no name for your map.\n");
                             return 0;
                         }
-                        //printf("Map lign valid.\n");
+                        //printf("Map Line valid.\n");
                 } /*else if ((strncmp(sentence, "en", 2))==0){ //Checking the energy parameter
                     char word [20];
                     int number;
@@ -86,7 +124,7 @@ int check_itd(char const *nameFile){
                     if (number>=1000 || number<0){
                         printf("Mauvaise valeur pour l'énergie, elle doit être comprise entre 0 et 1000.");
                     }
-                } */ else { // For all the other ligns
+                } */ else { // For all the other Lines
                     char word [20];
                     int number1, number2, number3;
                     sscanf (sentence,"%s %d %d %d",word,&number1, &number2, &number3);
@@ -94,25 +132,31 @@ int check_itd(char const *nameFile){
                         printf("Bad value(s) the color of the  %s\n", word);
                         return 0;
                     }
-                //printf("%s lign valid.\n", word);
+                    
+                //printf("%s Line valid.\n", word);
                 }
             }
             
-            //Checking the lign telling the number of nodes
-            if(numLign == 9){
+            //Checking the Line telling the number of nodes
+            if(numLine == 9){
                 char * end;
                 nodeNumber = strtol (sentence,&end,10);
                 if (0 == nodeNumber){
+<<<<<<< HEAD
                     printf("Ligne number 9 is not correct. It has to be a positiv number representing the number of nodes\n");
+=======
+                    printf("Linee number 9 is not correct. It has to be a positiv number representing the number of nodes\n");
+                    fclose(itdMap);
+>>>>>>> master
                     return 0;
                 } else {
                     temp = nodeNumber;
-                    //printf("Number of nodes lign valid.\n");
+                    //printf("Number of nodes Line valid.\n");
                 }
             }
 
             //Checking the format of the nodes announced before
-            if(numLign>=10){
+            if(numLine>=10){
                 int n1, n2, n3, n4;
                 sscanf (sentence,"%d %d %d %d",&n1,&n2, &n3, &n4);
                 if (n1!=nodeIndex){
@@ -135,7 +179,6 @@ int check_itd(char const *nameFile){
                 if (n2==1) entrance =true;
                 if (n2==2) exit =true;
 
-
                 nodeIndex++;
                 temp--;
             }
@@ -146,7 +189,7 @@ int check_itd(char const *nameFile){
             printf("The number of nodes actually described does not match the announced number of nodes.\n");
             return 0;
         } else {
-            //printf("Number of nodes described equal to announced number of node (lign 9).\n");
+            //printf("Number of nodes described equal to announced number of node (Line 9).\n");
         }
 
         if (!entrance){
