@@ -3,6 +3,7 @@
 
 #include "headers.h"
 #include "entity.h"
+#include "node.h"
 #include "timer.h"
 //#include "map.h"
 
@@ -60,7 +61,7 @@ Si r = 100 : reçoit 100% de l'attaque : pas résistant du tout */
 
 //autres
 		void move(int xAct, int yAct);
-		void gauge_Pv();
+		void jauge_Pv();
 
 };
 

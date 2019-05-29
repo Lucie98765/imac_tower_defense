@@ -83,7 +83,7 @@
 
     };
 	
-    void Monster::gauge_Pv() {
+    void Monster::jauge_Pv() {
         int subdiv = get_Pv();
     };
 //};

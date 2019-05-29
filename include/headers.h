@@ -14,11 +14,20 @@
     #include <GL/glu.h>
     #include <new>
    
+	#include <ctype.h>
     #include <cstdio>
     #include <cstdlib>
 	#include <iostream>
+	#include <fstream>  
+	#include <sstream>
+	#include <algorithm>
 	#include <string>
 	#include <vector>
 	#include <time.h>
+	#include <iterator>
+	#include <cstring>
+	#include <ctype.h>
+
+	using namespace std;
 
 #endif
