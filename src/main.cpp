@@ -12,16 +12,20 @@ static const unsigned int WINDOW_WIDTH = 800;
 static const unsigned int WINDOW_HEIGHT = 600;
 static const char WINDOW_TITLE[] = "Imac Tower Defense";
 
-static float aspectRatio;
-
 /* Espace fenetre virtuelle */
-static const float GL_VIEW_SIZE = 200.;
+static const float GL_VIEW_WIDTH = 800.;
+static const float GL_VIEW_HEIGHT = 600.;
 
 /* Nombre de bits par pixel de la fenetre */
 static const unsigned int BIT_PER_PIXEL = 32;
 
 /* Nombre minimal de millisecondes separant le rendu de deux images */
 static const Uint32 FRAMERATE_MILLISECONDS = 1000 / 60;
+
+/* Needed global variables */
+bool help_needed = false;
+
+
 
 
 void reshape(SDL_Surface** surface, unsigned int width, unsigned int height)
@@ -38,28 +42,16 @@ void reshape(SDL_Surface** surface, unsigned int width, unsigned int height)
     }
     *surface = surface_temp;
 
-    aspectRatio = width / (float) height;
-
-    glViewport(0, 0, (*surface)->w, (*surface)->h);
+    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    if( aspectRatio > 1) 
-    {
-        gluOrtho2D(
-        -GL_VIEW_SIZE / 2. * aspectRatio, GL_VIEW_SIZE / 2. * aspectRatio, 
-        -GL_VIEW_SIZE / 2., GL_VIEW_SIZE / 2.);
-    }
-    else
-    {
-        gluOrtho2D(
-        -GL_VIEW_SIZE / 2., GL_VIEW_SIZE / 2.,
-        -GL_VIEW_SIZE / 2. / aspectRatio, GL_VIEW_SIZE / 2. / aspectRatio);
-    }
+
+    gluOrtho2D(-GL_VIEW_WIDTH/2, GL_VIEW_WIDTH/2, -GL_VIEW_HEIGHT/2, GL_VIEW_HEIGHT/2);
+
 }
 
 
-void drawSquare(float x, float y) 
-{
+void drawSquare(float x, float y) {
 
     glBegin(GL_TRIANGLE_FAN);                        
     glVertex2f( x+15, y-15);
@@ -67,6 +59,60 @@ void drawSquare(float x, float y)
     glVertex2f( x-15, y+15);
     glVertex2f( x-15, y-15);
     glEnd();
+
+}
+
+void draw_help(GLuint* texture_help){
+    if (NULL != texture_help){
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, *texture_help);
+        glBegin(GL_QUADS);
+            glColor3ub(255,255,255);
+            glTexCoord2f(0, 1);
+            glVertex2f(-400., -300.);
+        
+            glTexCoord2f(1, 1);
+            glVertex2f(-370., -300.);
+        
+            glTexCoord2f(1, 0);
+            glVertex2f(-370., -270.);
+        
+            glTexCoord2f(0, 0);
+            glVertex2f(-400., -270.);
+        glEnd();
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
+    } else {
+        printf("display of help button failed\n");
+    }
+
+}
+
+void open_help(GLuint* texture_wdw){
+    if (NULL != texture_wdw){
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, *texture_wdw);
+        glBegin(GL_QUADS);
+            glColor3ub(255,255,255);
+            glTexCoord2f(0, 1);
+            glVertex2f(-400., -300.);
+        
+            glTexCoord2f(1, 1);
+            glVertex2f(400., -300.);
+        
+            glTexCoord2f(1, 0);
+            glVertex2f(400., 300.);
+        
+            glTexCoord2f(0, 0);
+            glVertex2f(-400., 300.);
+        glEnd();
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
+    } else {
+        printf("display of hep window failed\n");
+    }
 }
 
 
@@ -104,7 +150,7 @@ int main(int argc, char const *argv[]) {
     delete(newmap);
     
 
-/* Initialisation de la SDL */
+    /* Initializing SDL */
     if(-1 == SDL_Init(SDL_INIT_VIDEO)) 
     {
         fprintf(
@@ -113,29 +159,29 @@ int main(int argc, char const *argv[]) {
         exit(EXIT_FAILURE);
     }
   
-    /* Ouverture d'une fenetre et creation d'un contexte OpenGL */
+    /* Openning a window */
     SDL_Surface* surface;
     reshape(&surface, WINDOW_WIDTH, WINDOW_HEIGHT);
+    glClear(GL_COLOR_BUFFER_BIT);
 
-    /* Initialisation du titre de la fenetre */
+    /* Initializing the title of the window */
     SDL_WM_SetCaption(WINDOW_TITLE, NULL);
 
-    /* Chargement de l'image de fond */
+
+
+
+
+    /* MAP TEXTURE */
     char image_path[] = "images/carte03.png";
     SDL_Surface* image = IMG_Load(image_path);
     if(NULL == image) {
         fprintf(stderr, "Echec du chargement de l'image %s\n", image_path);
         exit(EXIT_FAILURE);
     }
-
-   /* Initialisation de la texture */
     GLuint texture_id;
     glGenTextures(1, &texture_id);
-
     glBindTexture(GL_TEXTURE_2D, texture_id);
-
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
     GLenum format;
     switch(image->format->BytesPerPixel) {
         case 1:
@@ -153,11 +199,81 @@ int main(int argc, char const *argv[]) {
     }
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->w, image->h, 0, format, GL_UNSIGNED_BYTE, image->pixels);
-
     glBindTexture(GL_TEXTURE_2D, 0);
 
+
+
+
+
+
+    /* HELP BUTTON TEXTURE */
+    SDL_Surface* help_image = IMG_Load("images/help_button.png");
+    if(NULL == help_image) {
+        fprintf(stderr, "Echec du chargement de l'image du bouton d'aide.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    GLuint texture_help_btn;
+    glGenTextures(1, &texture_help_btn);
+    glBindTexture(GL_TEXTURE_2D, texture_help_btn);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        switch(help_image->format->BytesPerPixel) {
+            case 1:
+                format = GL_RED;
+                break;
+            case 3:
+                format = GL_RGB;
+                break;
+            case 4:
+                format = GL_RGBA;
+                break;
+            default:
+                fprintf(stderr, "Format des pixels de l'image help button non supporte.\n");
+                return EXIT_FAILURE;
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, help_image->w, help_image->h, 0, format, GL_UNSIGNED_BYTE, help_image->pixels);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+
+
+
+
+
+    /* HELP WINDOW TEXTURE*/
+    SDL_Surface* help_window_image = IMG_Load("images/help_window2.png");
+    if(NULL == help_window_image) {
+        fprintf(stderr, "Echec du chargement de l'image de la fenêtre d'aide.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    GLuint texture_help_wdw;
+    glGenTextures(1, &texture_help_wdw);
+    glBindTexture(GL_TEXTURE_2D, texture_help_wdw);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        switch(help_window_image->format->BytesPerPixel) {
+            case 1:
+                format = GL_RED;
+                break;
+            case 3:
+                format = GL_RGB;
+                break;
+            case 4:
+                format = GL_RGBA;
+                break;
+            default:
+                fprintf(stderr, "Format des pixels de l'image d'aide non supporte.\n");
+                return EXIT_FAILURE;
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, help_window_image->w, help_window_image->h, 0, format, GL_UNSIGNED_BYTE, help_window_image->pixels);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+
+
+
+
+
   
-    /* Boucle principale */
+    /* Main loop */
     int loop = 1;
     while(loop) 
     {
@@ -175,23 +291,20 @@ int main(int argc, char const *argv[]) {
         glLoadIdentity();
 
         glPushMatrix();
-
             glBegin(GL_QUADS);
-        
+            glColor3ub(255,255,255);
             glTexCoord2f(0, 1);
-            glVertex2f(-133., -100.);
+            glVertex2f(-400., -300.);
         
             glTexCoord2f(1, 1);
-            glVertex2f(133., -100.);
+            glVertex2f(400., -300.);
         
             glTexCoord2f(1, 0);
-            glVertex2f(133., 100.);
+            glVertex2f(400., 300.);
         
             glTexCoord2f(0, 0);
-            glVertex2f(-133., 100.);
-
+            glVertex2f(-400., 300.);
             glEnd();
-
         glPopMatrix();
 
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -199,10 +312,27 @@ int main(int argc, char const *argv[]) {
         glDisable(GL_TEXTURE_2D);
 
 
+
+
         glPushMatrix();
             drawSquare(new_x, new_y);
         glPopMatrix();
-        
+
+
+
+
+        glPushMatrix();
+            draw_help(&texture_help_btn);
+        glPopMatrix();
+
+
+
+        if(help_needed){
+            glPushMatrix();
+                open_help(&texture_help_wdw);
+            glPopMatrix();
+        }
+
         /* Echange du front et du back buffer : mise a jour de la fenetre */
         SDL_GL_SwapBuffers();
         
@@ -241,6 +371,12 @@ int main(int argc, char const *argv[]) {
                     if (e.button.button == SDL_BUTTON_LEFT){
                         printf("clic en (%d, %d)\n", e.button.x, e.button.y);
                     } 
+
+                    if ((e.button.x <=30) && (e.button.x <=30)) help_needed = true;
+
+                    if(e.button.x>=730 && e.button.x<=770 && e.button.y>=30 && e.button.y<=70 && help_needed == true){
+                        help_needed = false;
+                    }
                     break;
 
                 
@@ -256,16 +392,8 @@ int main(int argc, char const *argv[]) {
                     x_mouse = e.motion.x;
                     y_mouse = e.motion.y;
 
-                    if(aspectRatio > 1.)
-                    {
-                        new_x = (-1 + 2. * x_mouse / (float) surface->w) * GL_VIEW_SIZE / 2. * aspectRatio;
-                        new_y = -(-1 + 2. * y_mouse / (float) surface->h) * GL_VIEW_SIZE / 2.; 
-                    }
-                    else
-                    {
-                        new_x = (-1 + 2. * x_mouse / (float) surface->w) * GL_VIEW_SIZE / 2.;
-                        new_y = -(-1 + 2. * y_mouse / (float) surface->h) * GL_VIEW_SIZE / 2. / aspectRatio; 
-                    }  
+                    new_x = (-1 + 2. * x_mouse / (float) surface->w) * GL_VIEW_WIDTH / 2.;
+                    new_y = -(-1 + 2. * y_mouse / (float) surface->h) * GL_VIEW_HEIGHT / 2.; 
                     
                     
                 default:
@@ -285,10 +413,13 @@ int main(int argc, char const *argv[]) {
 
     /* Liberation de la memoire allouee sur le GPU pour la texture */
     glDeleteTextures(1, &texture_id);
+    glDeleteTextures(1, &texture_help_btn);
+    glDeleteTextures(1, &texture_help_wdw);
 
     /* Liberation de la mémoire occupee par img */ 
     SDL_FreeSurface(image);
-
+    SDL_FreeSurface(help_image);
+    SDL_FreeSurface(help_window_image);
 
     /* Liberation des ressources associees a la SDL */ 
     SDL_Quit();
