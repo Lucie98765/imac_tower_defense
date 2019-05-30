@@ -80,25 +80,29 @@ char out_color[SIZE_COLOR_TAB] = "";
             if (numline > 3 ) {
               stringstream ss;
               ss << line;
+              string tmp;
                   int convert;
                   while (!ss.eof())
                   {
+                    ss >> tmp;
+                    if (tmp!="\n") { 
                     ss >> convert;
                     tmp_data.push_back(convert);
+                    }
                   }
-              map->set_data(tmp_data);
             }
             numline++;
-              //cout << map.get_width() << '\n';
-              // cout << map.get_height() << '\n';
-              // cout << map.get_one_value_data(32) << '\n';
           }
+          map->set_data(tmp_data);
+              cout << map->get_width() << '\n';
+              cout << map->get_height() << '\n';
+              cout << map->get_one_value_data(32) << '\n';
         }
-        cout << map->get_one_value_data((800*232+383)*3-1) << "\n";
-        cout <<"check\n";
-        cout << map->get_one_value_data((800*232+383)*3) << "\n";
-        cout <<"check\n";
-        cout << map->get_one_value_data((800*232+383)*3+1) << "\n";
+        // cout << map->get_one_value_data((800*232+383)*3) << "\n";
+        // cout <<"check\n";
+        // cout << map->get_one_value_data((800*232+383)*3+1) << "\n";
+        // cout <<"check\n";
+        // cout << map->get_one_value_data((800*232+383)*3+2) << "\n";
     };
 
 
@@ -110,10 +114,10 @@ int check_node_color(vector<Node>* node_vector, Map* map) {
         int x=(*node_vector)[i].get_pos_x();
         int y=(*node_vector)[i].get_pos_y();
         int position_rgb = (width*(y-1) +(x-1))*3;
-        int color_r = map->get_one_value_data(position_rgb + i);
-        int color_g = map->get_one_value_data(position_rgb + i + 1);
-        int color_b = map->get_one_value_data(position_rgb + i + 2);
-        if ( (color_r!=0) && (color_g!=0) && (color_b!=0) ) {
+        int color_r = map->get_one_value_data(position_rgb);
+        int color_g = map->get_one_value_data(position_rgb + 1);
+        int color_b = map->get_one_value_data(position_rgb + 2);
+        if ( (color_r!=0) or (color_g!=0) or (color_b!=0) ) {
             cout << "the node_color in ITD does not correspond to the map";
             return 1;
         }

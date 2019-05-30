@@ -87,7 +87,6 @@ int main(int argc, char const *argv[]) {
 	}
 
 	cout << (*Tab_Node)[0].get_pos_x() << "\n";
-	delete Tab_Node;
     //unsigned int x_mouse = 0, y_mouse = 0;
 
 
@@ -100,13 +99,13 @@ int main(int argc, char const *argv[]) {
     Map * newmap = new Map;
     load_check_Map(ppm_map_name,newmap);
     cout << newmap->get_width();
-    delete(newmap);
-    
+
+	int color_node=check_node_color(Tab_Node, newmap);
 
 
 
-
-
+	delete(newmap);
+	delete Tab_Node;
 // 	/* Initialisation de la SDL */
 //     if(-1 == SDL_Init(SDL_INIT_VIDEO)) 
 //     {
