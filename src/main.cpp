@@ -23,6 +23,9 @@ static const unsigned int BIT_PER_PIXEL = 32;
 static const Uint32 FRAMERATE_MILLISECONDS = 1000 / 60;
 
 
+bool help_needed = false;
+
+
 void reshape(SDL_Surface** surface, unsigned int width, unsigned int height)
 { 
     SDL_Surface* surface_temp = SDL_SetVideoMode(   
@@ -57,15 +60,57 @@ void drawSquare(float x, float y) {
 
 }
 
-void draw_help(){
+void draw_help(GLuint* texture_help){
+    if (NULL != texture_help){
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, *texture_help);
+        glBegin(GL_QUADS);
+            glColor3ub(255,255,255);
+            glTexCoord2f(0, 1);
+            glVertex2f(-400., -300.);
+        
+            glTexCoord2f(1, 1);
+            glVertex2f(-370., -300.);
+        
+            glTexCoord2f(1, 0);
+            glVertex2f(-370., -270.);
+        
+            glTexCoord2f(0, 0);
+            glVertex2f(-400., -270.);
+        glEnd();
 
-    glBegin(GL_TRIANGLE_FAN);   
-    glVertex2f( -400, -300);
-    glVertex2f( -390, -300);
-    glVertex2f( -390, -290);
-    glVertex2f( -400, -290);
-    glEnd();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
+    } else {
+        printf("display of help button failed\n");
+    }
 
+}
+
+void open_help(GLuint* texture){
+    if (NULL != texture){
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, *texture);
+        glBegin(GL_QUADS);
+            glColor3ub(255,255,255);
+            glTexCoord2f(0, 1);
+            glVertex2f(-400., -300.);
+        
+            glTexCoord2f(1, 1);
+            glVertex2f(300., -300.);
+        
+            glTexCoord2f(1, 0);
+            glVertex2f(400., 300.);
+        
+            glTexCoord2f(0, 0);
+            glVertex2f(-400., 300.);
+        glEnd();
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
+    } else {
+        printf("display of hep window failed\n");
+    }
 }
 
 
@@ -120,22 +165,19 @@ int main(int argc, char const *argv[]) {
     /* Initialisation du titre de la fenetre */
     SDL_WM_SetCaption(WINDOW_TITLE, NULL);
 
-    /* Chargement de l'image de fond */
+
+
+    /* MAP TEXTURE */
     char image_path[] = "images/carte03.png";
     SDL_Surface* image = IMG_Load(image_path);
     if(NULL == image) {
         fprintf(stderr, "Echec du chargement de l'image %s\n", image_path);
         exit(EXIT_FAILURE);
     }
-
-   /* Initialisation de la texture */
     GLuint texture_id;
     glGenTextures(1, &texture_id);
-
     glBindTexture(GL_TEXTURE_2D, texture_id);
-
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
     GLenum format;
     switch(image->format->BytesPerPixel) {
         case 1:
@@ -153,11 +195,81 @@ int main(int argc, char const *argv[]) {
     }
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->w, image->h, 0, format, GL_UNSIGNED_BYTE, image->pixels);
-
     glBindTexture(GL_TEXTURE_2D, 0);
 
+
+
+
+
+
+    /* Texture help button */
+    SDL_Surface* help_image = IMG_Load("images/help_button.png");
+    if(NULL == help_image) {
+        fprintf(stderr, "Echec du chargement de l'image du bouton d'aide.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    GLuint texture_help_btn;
+    glGenTextures(1, &texture_help_btn);
+    glBindTexture(GL_TEXTURE_2D, texture_help_btn);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        switch(help_image->format->BytesPerPixel) {
+            case 1:
+                format = GL_RED;
+                break;
+            case 3:
+                format = GL_RGB;
+                break;
+            case 4:
+                format = GL_RGBA;
+                break;
+            default:
+                fprintf(stderr, "Format des pixels de l'image help button non supporte.\n");
+                return EXIT_FAILURE;
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, help_image->w, help_image->h, 0, format, GL_UNSIGNED_BYTE, help_image->pixels);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+
+
+
+
+
+    /* Texture help window */
+    SDL_Surface* help_window_image = IMG_Load("images/help_window.png");
+    if(NULL == help_window_image) {
+        fprintf(stderr, "Echec du chargement de l'image de la fenêtre d'aide.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    GLuint texture_help_wdw;
+    glGenTextures(1, &texture_help_wdw);
+    glBindTexture(GL_TEXTURE_2D, texture_help_wdw);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        switch(help_window_image->format->BytesPerPixel) {
+            case 1:
+                format = GL_RED;
+                break;
+            case 3:
+                format = GL_RGB;
+                break;
+            case 4:
+                format = GL_RGBA;
+                break;
+            default:
+                fprintf(stderr, "Format des pixels de l'image d'aide non supporte.\n");
+                return EXIT_FAILURE;
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, help_window_image->w, help_window_image->h, 0, format, GL_UNSIGNED_BYTE, help_window_image->pixels);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+
+
+
+
+
   
-    /* Boucle principale */
+    /* Main loop */
     int loop = 1;
     while(loop) 
     {
@@ -199,13 +311,26 @@ int main(int argc, char const *argv[]) {
         glDisable(GL_TEXTURE_2D);
 
 
+
+
         glPushMatrix();
             drawSquare(new_x, new_y);
         glPopMatrix();
-        
+
+
+
+
         glPushMatrix();
-            draw_help();
+            draw_help(&texture_help_btn);
         glPopMatrix();
+
+
+
+        if(help_needed){
+            glPushMatrix();
+                open_help(&texture_help_wdw);
+            glPopMatrix();
+        }
 
         /* Echange du front et du back buffer : mise a jour de la fenetre */
         SDL_GL_SwapBuffers();
@@ -245,6 +370,8 @@ int main(int argc, char const *argv[]) {
                     if (e.button.button == SDL_BUTTON_LEFT){
                         printf("clic en (%d, %d)\n", e.button.x, e.button.y);
                     } 
+
+                    if ((e.button.x <=30) && (e.button.x <=30)) help_needed = true;
                     break;
 
                 
@@ -281,10 +408,13 @@ int main(int argc, char const *argv[]) {
 
     /* Liberation de la memoire allouee sur le GPU pour la texture */
     glDeleteTextures(1, &texture_id);
+    glDeleteTextures(1, &texture_help_btn);
+    glDeleteTextures(1, &texture_help_wdw);
 
     /* Liberation de la mémoire occupee par img */ 
     SDL_FreeSurface(image);
-
+    SDL_FreeSurface(help_image);
+    SDL_FreeSurface(help_window_image);
 
     /* Liberation des ressources associees a la SDL */ 
     SDL_Quit();
