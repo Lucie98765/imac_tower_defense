@@ -12,10 +12,9 @@ static const unsigned int WINDOW_WIDTH = 800;
 static const unsigned int WINDOW_HEIGHT = 600;
 static const char WINDOW_TITLE[] = "Imac Tower Defense";
 
-static float aspectRatio;
-
 /* Espace fenetre virtuelle */
-static const float GL_VIEW_SIZE = 200.;
+static const float GL_VIEW_WIDTH = 800.;
+static const float GL_VIEW_HEIGHT = 600.;
 
 /* Nombre de bits par pixel de la fenetre */
 static const unsigned int BIT_PER_PIXEL = 32;
@@ -38,28 +37,16 @@ void reshape(SDL_Surface** surface, unsigned int width, unsigned int height)
     }
     *surface = surface_temp;
 
-    aspectRatio = width / (float) height;
-
-    glViewport(0, 0, (*surface)->w, (*surface)->h);
+    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    if( aspectRatio > 1) 
-    {
-        gluOrtho2D(
-        -GL_VIEW_SIZE / 2. * aspectRatio, GL_VIEW_SIZE / 2. * aspectRatio, 
-        -GL_VIEW_SIZE / 2., GL_VIEW_SIZE / 2.);
-    }
-    else
-    {
-        gluOrtho2D(
-        -GL_VIEW_SIZE / 2., GL_VIEW_SIZE / 2.,
-        -GL_VIEW_SIZE / 2. / aspectRatio, GL_VIEW_SIZE / 2. / aspectRatio);
-    }
+
+    gluOrtho2D(-GL_VIEW_WIDTH/2, GL_VIEW_WIDTH/2, -GL_VIEW_HEIGHT/2, GL_VIEW_HEIGHT/2);
+
 }
 
 
-void drawSquare(float x, float y) 
-{
+void drawSquare(float x, float y) {
 
     glBegin(GL_TRIANGLE_FAN);                        
     glVertex2f( x+15, y-15);
@@ -67,6 +54,18 @@ void drawSquare(float x, float y)
     glVertex2f( x-15, y+15);
     glVertex2f( x-15, y-15);
     glEnd();
+
+}
+
+void draw_help(){
+
+    glBegin(GL_TRIANGLE_FAN);   
+    glVertex2f( -400, -300);
+    glVertex2f( -390, -300);
+    glVertex2f( -390, -290);
+    glVertex2f( -400, -290);
+    glEnd();
+
 }
 
 
@@ -116,6 +115,7 @@ int main(int argc, char const *argv[]) {
     /* Ouverture d'une fenetre et creation d'un contexte OpenGL */
     SDL_Surface* surface;
     reshape(&surface, WINDOW_WIDTH, WINDOW_HEIGHT);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     /* Initialisation du titre de la fenetre */
     SDL_WM_SetCaption(WINDOW_TITLE, NULL);
@@ -179,16 +179,16 @@ int main(int argc, char const *argv[]) {
             glBegin(GL_QUADS);
         
             glTexCoord2f(0, 1);
-            glVertex2f(-133., -100.);
+            glVertex2f(-400., -300.);
         
             glTexCoord2f(1, 1);
-            glVertex2f(133., -100.);
+            glVertex2f(400., -300.);
         
             glTexCoord2f(1, 0);
-            glVertex2f(133., 100.);
+            glVertex2f(400., 300.);
         
             glTexCoord2f(0, 0);
-            glVertex2f(-133., 100.);
+            glVertex2f(-400., 300.);
 
             glEnd();
 
@@ -203,6 +203,10 @@ int main(int argc, char const *argv[]) {
             drawSquare(new_x, new_y);
         glPopMatrix();
         
+        glPushMatrix();
+            draw_help();
+        glPopMatrix();
+
         /* Echange du front et du back buffer : mise a jour de la fenetre */
         SDL_GL_SwapBuffers();
         
@@ -256,16 +260,8 @@ int main(int argc, char const *argv[]) {
                     x_mouse = e.motion.x;
                     y_mouse = e.motion.y;
 
-                    if(aspectRatio > 1.)
-                    {
-                        new_x = (-1 + 2. * x_mouse / (float) surface->w) * GL_VIEW_SIZE / 2. * aspectRatio;
-                        new_y = -(-1 + 2. * y_mouse / (float) surface->h) * GL_VIEW_SIZE / 2.; 
-                    }
-                    else
-                    {
-                        new_x = (-1 + 2. * x_mouse / (float) surface->w) * GL_VIEW_SIZE / 2.;
-                        new_y = -(-1 + 2. * y_mouse / (float) surface->h) * GL_VIEW_SIZE / 2. / aspectRatio; 
-                    }  
+                    new_x = (-1 + 2. * x_mouse / (float) surface->w) * GL_VIEW_WIDTH / 2.;
+                    new_y = -(-1 + 2. * y_mouse / (float) surface->h) * GL_VIEW_HEIGHT / 2.; 
                     
                     
                 default:
