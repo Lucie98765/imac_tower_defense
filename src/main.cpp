@@ -22,8 +22,10 @@ static const unsigned int BIT_PER_PIXEL = 32;
 /* Nombre minimal de millisecondes separant le rendu de deux images */
 static const Uint32 FRAMERATE_MILLISECONDS = 1000 / 60;
 
-
+/* Needed global variables */
 bool help_needed = false;
+
+
 
 
 void reshape(SDL_Surface** surface, unsigned int width, unsigned int height)
@@ -87,17 +89,17 @@ void draw_help(GLuint* texture_help){
 
 }
 
-void open_help(GLuint* texture){
-    if (NULL != texture){
+void open_help(GLuint* texture_wdw){
+    if (NULL != texture_wdw){
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, *texture);
+        glBindTexture(GL_TEXTURE_2D, *texture_wdw);
         glBegin(GL_QUADS);
             glColor3ub(255,255,255);
             glTexCoord2f(0, 1);
             glVertex2f(-400., -300.);
         
             glTexCoord2f(1, 1);
-            glVertex2f(300., -300.);
+            glVertex2f(400., -300.);
         
             glTexCoord2f(1, 0);
             glVertex2f(400., 300.);
@@ -148,7 +150,7 @@ int main(int argc, char const *argv[]) {
     delete(newmap);
     
 
-/* Initialisation de la SDL */
+    /* Initializing SDL */
     if(-1 == SDL_Init(SDL_INIT_VIDEO)) 
     {
         fprintf(
@@ -157,13 +159,15 @@ int main(int argc, char const *argv[]) {
         exit(EXIT_FAILURE);
     }
   
-    /* Ouverture d'une fenetre et creation d'un contexte OpenGL */
+    /* Openning a window */
     SDL_Surface* surface;
     reshape(&surface, WINDOW_WIDTH, WINDOW_HEIGHT);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    /* Initialisation du titre de la fenetre */
+    /* Initializing the title of the window */
     SDL_WM_SetCaption(WINDOW_TITLE, NULL);
+
+
 
 
 
@@ -202,7 +206,7 @@ int main(int argc, char const *argv[]) {
 
 
 
-    /* Texture help button */
+    /* HELP BUTTON TEXTURE */
     SDL_Surface* help_image = IMG_Load("images/help_button.png");
     if(NULL == help_image) {
         fprintf(stderr, "Echec du chargement de l'image du bouton d'aide.\n");
@@ -235,8 +239,8 @@ int main(int argc, char const *argv[]) {
 
 
 
-    /* Texture help window */
-    SDL_Surface* help_window_image = IMG_Load("images/help_window.png");
+    /* HELP WINDOW TEXTURE*/
+    SDL_Surface* help_window_image = IMG_Load("images/help_window2.png");
     if(NULL == help_window_image) {
         fprintf(stderr, "Echec du chargement de l'image de la fenêtre d'aide.\n");
         exit(EXIT_FAILURE);
@@ -287,9 +291,8 @@ int main(int argc, char const *argv[]) {
         glLoadIdentity();
 
         glPushMatrix();
-
             glBegin(GL_QUADS);
-        
+            glColor3ub(255,255,255);
             glTexCoord2f(0, 1);
             glVertex2f(-400., -300.);
         
@@ -301,9 +304,7 @@ int main(int argc, char const *argv[]) {
         
             glTexCoord2f(0, 0);
             glVertex2f(-400., 300.);
-
             glEnd();
-
         glPopMatrix();
 
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -372,6 +373,10 @@ int main(int argc, char const *argv[]) {
                     } 
 
                     if ((e.button.x <=30) && (e.button.x <=30)) help_needed = true;
+
+                    if(e.button.x>=730 && e.button.x<=770 && e.button.y>=30 && e.button.y<=70 && help_needed == true){
+                        help_needed = false;
+                    }
                     break;
 
                 
