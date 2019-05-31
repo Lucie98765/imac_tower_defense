@@ -23,6 +23,19 @@ char out_color[SIZE_COLOR_TAB] = "";
       return data;
     };
 
+    vector<int> Map::get_node() {
+      return node_color;
+    };
+    
+    vector<int> Map::get_path() {
+      return path_color;
+    };
+
+    vector<int> Map::get_construct() {
+      return construct_field;
+    };
+
+
     int Map::get_one_value_data (int i) {
       return data[i];
     }
@@ -39,6 +52,19 @@ char out_color[SIZE_COLOR_TAB] = "";
       data = newvalue;
     };
 
+    void Map::set_node(vector<int> newvalue) {
+      node_color = newvalue;
+    };
+
+    void Map::set_path(vector<int> newvalue) {
+      path_color = newvalue;
+    };
+
+    void Map::set_construct(vector<int> newvalue) {
+      construct_field = newvalue;
+    };
+
+
     void load_check_Map(const char* pathimage, Map* map) {
         ifstream fichier(pathimage);
         string line;
@@ -48,12 +74,14 @@ char out_color[SIZE_COLOR_TAB] = "";
         {  
           int numline=1;
           while (getline(fichier, line)) {
+            //check if format is P3
             if  (numline == 1) {
               if (line != "P3") {
                 cout << "The ppm is not a P3 format";
                 return;
               }
             }
+            //stock the width and the height
             if ( numline == 2 ) {
               bool width = true;
               stringstream ss;
@@ -71,81 +99,116 @@ char out_color[SIZE_COLOR_TAB] = "";
                   }
                 }
             }
+            //check if the 3rd line is 255
             if  (numline == 3) {
               if (line != "255") {
                 cout << "3rd line is not 255" << "\n";
                 return;
               }
             }
+            //stock all the rgb compenant
             if (numline > 3 ) {
               stringstream ss;
               ss << line;
+              string tmp;
                   int convert;
                   while (!ss.eof())
                   {
+                    ss >> tmp;
+                    if (tmp!="\n") { 
                     ss >> convert;
                     tmp_data.push_back(convert);
+                    }
                   }
-              map->set_data(tmp_data);
             }
             numline++;
-              //cout << map.get_width() << '\n';
-              // cout << map.get_height() << '\n';
-              // cout << map.get_one_value_data(32) << '\n';
           }
+          //
+          map->set_data(tmp_data);
+        //   for (unsigned int i=0; i < tmp_data.size(); i++) {
+        //       cout << tmp_data[i];
+        //   }
         }
-        cout << map->get_one_value_data((800*232+383)*3-1) << "\n";
-        cout <<"check\n";
-        cout << map->get_one_value_data((800*232+383)*3) << "\n";
-        cout <<"check\n";
-        cout << map->get_one_value_data((800*232+383)*3+1) << "\n";
+        // cout << map->get_one_value_data((800*232+383)*3) << "\n";
+        // cout <<"check\n";
+        // cout << map->get_one_value_data((800*232+383)*3+1) << "\n";
+        // cout <<"check\n";
+        // cout << map->get_one_value_data((800*232+383)*3+2) << "\n";
     };
 
 
 
 
-int check_node_color(vector<Node>* node_vector, Map* map) {
-	for (unsigned int i=0; i<node_vector->size(); i++)  {
-        int width=map->get_width();
-        int x=(*node_vector)[i].get_pos_x();
-        int y=(*node_vector)[i].get_pos_y();
-        int position_rgb = (width*(y-1) +(x-1))*3;
-        int color_r = map->get_one_value_data(position_rgb + i);
-        int color_g = map->get_one_value_data(position_rgb + i + 1);
-        int color_b = map->get_one_value_data(position_rgb + i + 2);
-        if ( (color_r!=0) && (color_g!=0) && (color_b!=0) ) {
+int check_node_color(Node node, Map map) {
+    int width=map.get_width();
+        int x=node.get_pos_x();
+        int y=node.get_pos_y();
+        // Dans map.h, la classe map a un vecotr<int> data qui contient les composants RGB de la ppm, je suppose que le premier pixel se trouve à la position (1,1) (enfin j'esềre que c'est ça) 
+        int position_rgb =(width*(y-1) + (x-1))*3 ;
+        int color_r = map.get_one_value_data(position_rgb);
+        int color_g = map.get_one_value_data(position_rgb+1);
+        int color_b = map.get_one_value_data(position_rgb+2);
+        cout << x << " " << y << "\n";
+        cout << color_r << " " << color_g << " " << color_b << "\n";
+        if ( (color_r!=node.get_one_color_rgb(0)) &&
+             (color_g!=node.get_one_color_rgb(1)) && 
+             (color_b!=node.get_one_color_rgb(2)) ) {
             cout << "the node_color in ITD does not correspond to the map";
             return 1;
         }
-   }
+   
    return 0;
 }
 
-bool bressenham(Node *point1, Node *point2, vector<int> path_color[3], vector<Entity>* path) { 
-    // unsigned x1 = point1->get_pos_x();
-    // unsigned y1 = point1->get_pos_y();
-    // unsigned x2 = point2->get_pos_x();
-    // unsigned y2 = point2->get_pos_y();
-    // vector<int> color[3] = path_color;
-    // {
-    //   int dx  = x2 - x1,
-    //       dy  = y2 - y1,
-    //       y   = y1,
-    //       e = 0,5, //initial error value
-    //       e_0_1 = dy /dx, // ratio between dy dx
-    //       e_1_0= -1;
-    //   for ( int x = x1; x <= x2; x++ )  {
-    //     //tracer pixel
-    //     if ( (e + e_1_0) >= 0 ) {
-    //       y=y+1;
-    //       e= e + e_0_1;
-    //     }
-    //     eps += dy;
-    //     if ( (eps << 1) >= dx )  {
-    //       y++;  eps -= dx;
-    //     }
-    //   }
-    // }
+bool check_path_color(int x, int y, vector<int> pathcolor, Map map) {
+    int width=map.get_width();
+        int position_rgb =(width*(y-1) + x)*3 ;
+        int color_r = map.get_one_value_data(position_rgb);
+        int color_g = map.get_one_value_data(position_rgb+1);
+        int color_b = map.get_one_value_data(position_rgb+2);
+        cout << color_r << " " << color_g << " " << color_b << "\n";
+        cout << x << " " << y << "\n";
+        if ( (color_r!=pathcolor[0]) &&
+             (color_g!=pathcolor[1]) && 
+             (color_b!=pathcolor[2]) ) {
+            cout << "the pixel does not correspond to the path of map \n";
+            return false;
+        }
+   return true;
+}
+
+
+
+bool bressenham(Node point1, Node point2, vector<int> path_color, vector<Entity>* path, Map map) {
+    Entity *pixel;
+    
+    unsigned x1 = point1.get_pos_x();
+    unsigned y1 = point1.get_pos_y();
+    unsigned x2 = point2.get_pos_x();
+    unsigned y2 = point2.get_pos_y();
+    pixel->set_X(x1);
+    pixel->set_Y(y1);
+    path->push_back(*pixel);
+
+    //Bressenham Algorithm (optimized)
+    int   e = x2 - x1, //-e(0,1)
+          dx  = e*2, //-e(0,1)
+          dy  = (y2 - y1)*2; //e(1,0)
+    while (x1 <= x2) {
+        //tracer segment
+        x1 = x1+1; //next column pixel
+        if ( (e - dy) <= 0 ) { //next pixel error on the same range 
+            y1 = y1 +1; //Choose the next pixel on the superior range
+            e = e + dx; //ajusts the commited error on the new range
+            if ( check_path_color(x1,y1, path_color, map) == false ) { //check if the 
+                cout << "You quit the path! Game Over";
+                return false;
+            }
+        pixel->set_X(x1);
+        pixel->set_Y(y1);
+        path->push_back(*pixel);
+        }
+    }
     return true;
 }
 
@@ -170,13 +233,18 @@ bool enter_exit(vector<Node>* nodeList) {
 
 
 
+
+
 int check_itd(char const *nameFile, vector<Node> *TabNode){
     FILE* itdMap = NULL;
     char sentence[MAX_SIZE] = "";
     int numLine = 0;
     int nodeNumber = 0;
     int counter_node=0;
-    vector<int> color_stock(3);
+    vector<int> enter_color_stock;
+    vector<int> exit_color_stock;
+    vector<int> color_stock;
+    vector<int> path_color_stock;
     bool EnterExit=false;
     // bool entrance = false, exit = false;
 
@@ -217,7 +285,7 @@ int check_itd(char const *nameFile, vector<Node> *TabNode){
             
 
             //Checking ligns 3 to 8
-            if(numLine>=3 && numLine<=8){ //We now have to check every item
+            if(numLine>=3 && numLine<=8){ //Now we have to check every item
                 /* Map lign */
                 if ((strncmp(sentence, "ca", 2))==0){ //If it is the lign describing the map name
                         char const *nom_carte = NULL;
@@ -258,10 +326,29 @@ int check_itd(char const *nameFile, vector<Node> *TabNode){
                             printf("Bad value(s) the color of the  %s\n", word);
                             return 0;
                         }
+                        //stock the rgb component of path
+                        if (numLine == 4) {
+                            path_color_stock.push_back(number1);
+                            path_color_stock.push_back(number2);
+                            path_color_stock.push_back(number3);
+                        }
+                        //stock the rgb component of nodes
                         if (numLine == 5) {
                             color_stock.push_back(number1);
                             color_stock.push_back(number2);
                             color_stock.push_back(number3);
+                        }
+                        //stock the rgb component of entry
+                        if (numLine == 7) {
+                            enter_color_stock.push_back(number1);
+                            enter_color_stock.push_back(number2);
+                            enter_color_stock.push_back(number3);
+                        }
+                        //stock the rgb component of exit
+                        if (numLine == 8) {
+                            exit_color_stock.push_back(number1);
+                            exit_color_stock.push_back(number2);
+                            exit_color_stock.push_back(number3);
                         }
                     }
                     
@@ -308,8 +395,16 @@ int check_itd(char const *nameFile, vector<Node> *TabNode){
             // }
             if (numLine >= 10) {
                 Node* tmp_Node = new Node;
-                tmp_Node->set_color_rgb(color_stock);
                 *tmp_Node=collectNode(sentence,tmp_Node);
+                if (tmp_Node->get_number_node() == 1) {
+                    tmp_Node->set_color_rgb(enter_color_stock);
+                }
+                if (tmp_Node->get_number_node() == 2) {
+                    tmp_Node->set_color_rgb(exit_color_stock);
+                }
+                else {
+                    tmp_Node->set_color_rgb(color_stock);
+                }
                 TabNode->push_back(*tmp_Node);
                 counter_node++;
             }
@@ -345,5 +440,3 @@ int check_itd(char const *nameFile, vector<Node> *TabNode){
     }
     return 1;
 }
-
-

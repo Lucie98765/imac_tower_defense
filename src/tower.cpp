@@ -72,15 +72,15 @@ void Tower::set_price(int value) {
 Tower::~Tower(){};
 
 //methodes
-void Tower::tirer(int power, Monster monster, TYPE_TOWER type) {
+void Tower::shot(int power, Monster monster, TYPE_TOWER type) {
     int scope_x_inf = Tower::get_x() - (int)Tower::get_scope();
     int scope_x_sup = Tower::get_x() + (int)Tower::get_scope();
     int scope_y_inf = Tower::get_y() - (int)Tower::get_scope();
     int scope_y_sup = Tower::get_y() + (int)Tower::get_scope();
     if ( (monster.get_x() < scope_x_sup) && (monster.get_x() > scope_x_inf)
-        && (monster.get_y() < scope_y_sup) && (monster.get_y() > scope_y_sup) )
+        && (monster.get_y() < scope_y_sup) && (monster.get_y() > scope_y_inf) )
     {
-        switch (type)
+        switch (Tower::get_type_tower())
         {
             case ROCKET:
             {      
