@@ -6,7 +6,7 @@ LDFLAGS	= -lSDL -lGLU -lGL -lm
 SRCDIR		=	./src/
 OBJDIR		=	./obj/
 BIN	= ./bin/ImacTowerDefense
-OBJ    = ./obj/main.o ./obj/node.o ./obj/map.o ./obj/entity.o ./obj/monster.o ./obj/tower.o ./obj/batiment.o ./obj/timer.o
+OBJ    = ./obj/main.o ./obj/node.o ./obj/map.o ./obj/entity.o ./obj/monster.o ./obj/tower.o ./obj/batiment.o ./obj/timer.o ./obj/texture.o
 RM     = rm -f
 DIRNAME = $(shell basename $$PWD)
 BACKUP  = $(shell date +`basename $$PWD`-%m.%d.%H.%M.zip)
@@ -52,6 +52,11 @@ $(OBJDIR)batiment.o : ./src/batiment.cpp ./include/batiment.h
 
 $(OBJDIR)timer.o : ./src/timer.cpp ./include/timer.h
 	@echo "compile timer"
+	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
+	@echo "done..."
+
+$(OBJDIR)texture.o : ./src/texture.cpp ./include/texture.h
+	@echo "compile texture"
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
 

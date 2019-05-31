@@ -4,7 +4,7 @@
 #include "../include/batiment.h"
 #include "../include/map.h"
 #include "../include/node.h"
-#include "../include/headers.h"
+#include "../include/texture.h"
 
 
 /* Dimensions initiales et titre de la fenetre */
@@ -24,6 +24,14 @@ static const Uint32 FRAMERATE_MILLISECONDS = 1000 / 60;
 
 /* Needed global variables */
 bool help_needed = false;
+bool r_pressed = false;
+bool g_pressed = false;
+bool b_pressed = false;
+bool y_pressed = false;
+int nb_red_tower = 0;
+int nb_blue_tower = 0;
+int nb_green_tower = 0;
+int nb_yellow_tower = 0;
 
 
 
@@ -53,7 +61,18 @@ void reshape(SDL_Surface** surface, unsigned int width, unsigned int height)
 
 void drawSquare(float x, float y) {
 
-    glBegin(GL_TRIANGLE_FAN);                        
+    glBegin(GL_TRIANGLE_FAN);
+    if (r_pressed){
+        glColor3ub(255, 0, 0);
+    } else if ( g_pressed){
+        glColor3ub(0, 255, 0);
+    } else if (b_pressed){
+        glColor3ub(0, 0, 255);
+    } else if (y_pressed){
+        glColor3ub(255, 255, 0);
+    } else {
+        glColor3ub(255, 255, 255);
+    }
     glVertex2f( x+15, y-15);
     glVertex2f( x+15, y+15);
     glVertex2f( x-15, y+15);
@@ -111,7 +130,35 @@ void open_help(GLuint* texture_wdw){
         glBindTexture(GL_TEXTURE_2D, 0);
         glDisable(GL_TEXTURE_2D);
     } else {
-        printf("display of hep window failed\n");
+        printf("display of help window failed\n");
+    }
+}
+
+
+void draw_tower(GLuint* texture_tower, int x, int y){
+    if (NULL != texture_tower){
+        printf("ouaip\n");
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, *texture_tower);
+        glBegin(GL_QUADS);
+            glColor3ub(255,255,255);
+            glTexCoord2f(0, 1);
+            glVertex2f(x-15, y-15.);
+        
+            glTexCoord2f(1, 1);
+            glVertex2f(x+15., y-15.);
+        
+            glTexCoord2f(1, 0);
+            glVertex2f(x+15., y+15.);
+        
+            glTexCoord2f(0, 0);
+            glVertex2f(x-15., y+15.);
+        glEnd();
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
+    } else {
+        printf("display of tower failed\n");
     }
 }
 
@@ -172,102 +219,38 @@ int main(int argc, char const *argv[]) {
 
 
     /* MAP TEXTURE */
-    char image_path[] = "images/carte03.png";
-    SDL_Surface* image = IMG_Load(image_path);
-    if(NULL == image) {
-        fprintf(stderr, "Echec du chargement de l'image %s\n", image_path);
-        exit(EXIT_FAILURE);
-    }
-    GLuint texture_id;
-    glGenTextures(1, &texture_id);
-    glBindTexture(GL_TEXTURE_2D, texture_id);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    GLenum format;
-    switch(image->format->BytesPerPixel) {
-        case 1:
-            format = GL_RED;
-            break;
-        case 3:
-            format = GL_RGB;
-            break;
-        case 4:
-            format = GL_RGBA;
-            break;
-        default:
-            fprintf(stderr, "Format des pixels de l'image %s non supporte.\n", image_path);
-            return EXIT_FAILURE;
-    }
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->w, image->h, 0, format, GL_UNSIGNED_BYTE, image->pixels);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-
-
-
+    char const *image_path = "images/carte03.png";
+    GLuint texture_map_BG = createTexture(image_path);
+    
 
 
     /* HELP BUTTON TEXTURE */
-    SDL_Surface* help_image = IMG_Load("images/help_button.png");
-    if(NULL == help_image) {
-        fprintf(stderr, "Echec du chargement de l'image du bouton d'aide.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    GLuint texture_help_btn;
-    glGenTextures(1, &texture_help_btn);
-    glBindTexture(GL_TEXTURE_2D, texture_help_btn);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        switch(help_image->format->BytesPerPixel) {
-            case 1:
-                format = GL_RED;
-                break;
-            case 3:
-                format = GL_RGB;
-                break;
-            case 4:
-                format = GL_RGBA;
-                break;
-            default:
-                fprintf(stderr, "Format des pixels de l'image help button non supporte.\n");
-                return EXIT_FAILURE;
-        }
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, help_image->w, help_image->h, 0, format, GL_UNSIGNED_BYTE, help_image->pixels);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-
-
-
+    char const *help_btn_path = "images/help_button.png";
+    GLuint texture_help_button = createTexture(help_btn_path);
+    
 
 
     /* HELP WINDOW TEXTURE*/
-    SDL_Surface* help_window_image = IMG_Load("images/help_window2.png");
-    if(NULL == help_window_image) {
-        fprintf(stderr, "Echec du chargement de l'image de la fenêtre d'aide.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    GLuint texture_help_wdw;
-    glGenTextures(1, &texture_help_wdw);
-    glBindTexture(GL_TEXTURE_2D, texture_help_wdw);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        switch(help_window_image->format->BytesPerPixel) {
-            case 1:
-                format = GL_RED;
-                break;
-            case 3:
-                format = GL_RGB;
-                break;
-            case 4:
-                format = GL_RGBA;
-                break;
-            default:
-                fprintf(stderr, "Format des pixels de l'image d'aide non supporte.\n");
-                return EXIT_FAILURE;
-        }
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, help_window_image->w, help_window_image->h, 0, format, GL_UNSIGNED_BYTE, help_window_image->pixels);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    char const *help_wdw_path = "images/help_window2.png";
+    GLuint texture_help_wdw= createTexture(help_wdw_path);
 
 
+
+    /* RED TOWER TEXTURE */
+    char const *red_tower_path = "images/red_tower.png";
+    GLuint texture_red_tower = createTexture(red_tower_path);
+
+    /* GREEN TOWER TEXTURE */
+    char const *green_tower_path = "images/green_tower.png";
+    GLuint texture_green_tower = createTexture(green_tower_path);
+
+    /* BLUE TOWER TEXTURE */
+    char const *blue_tower_path = "images/blue_tower.png";
+    GLuint texture_blue_tower = createTexture(blue_tower_path);
+
+    /* YELLOW TOWER TEXTURE */
+    char const *yellow_tower_path = "images/yellow_tower.png";
+    GLuint texture_yellow_tower = createTexture(yellow_tower_path);
 
 
 
@@ -285,7 +268,7 @@ int main(int argc, char const *argv[]) {
 
         glEnable(GL_TEXTURE_2D);
 
-        glBindTexture(GL_TEXTURE_2D, texture_id);
+        glBindTexture(GL_TEXTURE_2D, texture_map_BG);
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
@@ -321,8 +304,8 @@ int main(int argc, char const *argv[]) {
 
 
 
-        glPushMatrix();
-            draw_help(&texture_help_btn);
+       glPushMatrix();
+            draw_help(&texture_help_button);
         glPopMatrix();
 
 
@@ -332,6 +315,8 @@ int main(int argc, char const *argv[]) {
                 open_help(&texture_help_wdw);
             glPopMatrix();
         }
+
+
 
         /* Echange du front et du back buffer : mise a jour de la fenetre */
         SDL_GL_SwapBuffers();
@@ -354,8 +339,7 @@ int main(int argc, char const *argv[]) {
                 break;
             }
         
-            if( e.type == SDL_KEYDOWN 
-                && (e.key.keysym.sym == SDLK_q || e.key.keysym.sym == SDLK_ESCAPE))
+            if( e.type == SDL_KEYDOWN && (e.key.keysym.sym == SDLK_q || e.key.keysym.sym == SDLK_ESCAPE))
             {
                 loop = 0; 
                 break;
@@ -377,12 +361,60 @@ int main(int argc, char const *argv[]) {
                     if(e.button.x>=730 && e.button.x<=770 && e.button.y>=30 && e.button.y<=70 && help_needed == true){
                         help_needed = false;
                     }
+
+
+
+
+
+                    if(r_pressed){
+                        Tower newtower(e.button.x, e.button.y, ROCKET, 8.0, 2.0, 3.0, 6);
+                        printf("Red tower created\n");
+                        draw_tower(&texture_red_tower, e.button.x, e.button.y);
+                    }
+
+                    if(g_pressed){
+                        Tower newtower(e.button.x, e.button.y, LASER, 5.0, 1.0, 8.0, 5);
+                        printf("Green tower created\n");
+                    }
+
+                    if(b_pressed){
+                        Tower newtower(e.button.x, e.button.y, HYBRID, 3.0, 8.0, 6.0, 6);
+                        printf("Blue tower created\n");
+                    }
+
+                    if(y_pressed){
+                        Tower newtower(e.button.x, e.button.y, MACHINEGUN, 2.0, 2.0, 4.0, 3);
+                        printf("Yellow tower created\n");
+                    }
+
+
+
+
+
+
                     break;
 
                 
                 /* Touche clavier */
                 case SDL_KEYDOWN:
                     printf("touche pressee (code = %d)\n", e.key.keysym.sym);
+                    if(114 == e.key.keysym.sym){
+                        printf("R pressed\n");
+                        r_pressed = true;
+                        g_pressed = b_pressed = y_pressed = false;
+                    } else if(103 == e.key.keysym.sym){
+                        printf("g pressed\n");
+                        g_pressed = true;
+                        r_pressed = b_pressed = y_pressed = false;
+                    } else if(98 == e.key.keysym.sym){
+                        printf("b pressed\n");
+                        b_pressed = true;
+                        r_pressed = g_pressed = y_pressed = false;
+                    } else if(121 == e.key.keysym.sym){
+                        printf("y pressed\n");
+                        y_pressed = true;
+                        r_pressed = g_pressed = b_pressed = false;
+                    }
                     break;
 
 
@@ -411,15 +443,14 @@ int main(int argc, char const *argv[]) {
         }
     }
 
-    /* Liberation de la memoire allouee sur le GPU pour la texture */
-    glDeleteTextures(1, &texture_id);
-    glDeleteTextures(1, &texture_help_btn);
-    glDeleteTextures(1, &texture_help_wdw);
-
     /* Liberation de la mémoire occupee par img */ 
-    SDL_FreeSurface(image);
-    SDL_FreeSurface(help_image);
-    SDL_FreeSurface(help_window_image);
+    free_texture(texture_map_BG);
+    free_texture(texture_help_button);
+    free_texture(texture_help_wdw);
+    free_texture(texture_red_tower);
+    free_texture(texture_green_tower);
+    free_texture(texture_blue_tower);
+    free_texture(texture_yellow_tower);
 
     /* Liberation des ressources associees a la SDL */ 
     SDL_Quit();
