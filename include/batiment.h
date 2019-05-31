@@ -39,17 +39,22 @@ class Installation : public Entity
     ~Installation();
 
     //getters (no need setters)
+    TYPE_INSTALL get_type();
     int get_size();
     int get_price();
     int get_scope();
 
     //other methods
-    void amelioration(TYPE_INSTALL type,Tower tower);
+    void amelioration(TYPE_INSTALL type,Tower *tower);
 
 
     //PARTIE SDL VISUEL à voir...
 
 };
+
+void create_installation(int coord_x, int coord_y, TYPE_INSTALL type, Installation new_install);
+
+void apply_effect_to_tower(Installation * installation, Tower * tower);
 
 
 #endif

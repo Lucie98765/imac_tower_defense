@@ -62,7 +62,7 @@ class Tower : public Entity
     void set_position(int value_x, int value_y);
 
     //other method
-    void tirer(int power, Monster monster, TYPE_TOWER type);
+    void shot(int power, Monster monster, TYPE_TOWER type);
 
     //PARTIE SDL VISUELLE à voir...
 

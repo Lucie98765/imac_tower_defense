@@ -4,9 +4,10 @@ CFLAGS = -Wall -O2 -Wno-unused-result -g
 LIB    = -lm -lSDL_image
 LDFLAGS	= -lSDL -lGLU -lGL -lm
 SRCDIR		=	./src/
+INCLDIR = ./include/
 OBJDIR		=	./obj/
 BIN	= ./bin/ImacTowerDefense
-OBJ    = ./obj/main.o ./obj/node.o ./obj/map.o ./obj/entity.o ./obj/monster.o ./obj/tower.o ./obj/batiment.o ./obj/timer.o ./obj/texture.o
+OBJ    = $(OBJDIR)main.o $(OBJDIR)node.o $(OBJDIR)map.o $(OBJDIR)entity.o $(OBJDIR)monster.o $(OBJDIR)tower.o $(OBJDIR)batiment.o $(OBJDIR)timer.o $(OBJDIR)money.o
 RM     = rm -f
 DIRNAME = $(shell basename $$PWD)
 BACKUP  = $(shell date +`basename $$PWD`-%m.%d.%H.%M.zip)
@@ -20,48 +21,48 @@ all : $(OBJ)
 
 
 
-$(OBJDIR)map.o : ./src/map.cpp ./include/map.h
+$(OBJDIR)map.o : $(SRCDIR)map.cpp $(INCLDIR)map.h
 	@echo "compile map"
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
 
-$(OBJDIR)node.o : ./src/node.cpp ./include/node.h
+$(OBJDIR)node.o : $(SRCDIR)node.cpp $(INCLDIR)node.h
 	@echo "compile node"
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
 
-$(OBJDIR)entity.o : ./src/entity.cpp ./include/entity.h
+$(OBJDIR)entity.o : $(SRCDIR)entity.cpp $(INCLDIR)entity.h
 	@echo "compile entity"
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
 
-$(OBJDIR)monster.o : ./src/monster.cpp ./include/monster.h
+$(OBJDIR)monster.o : $(SRCDIR)monster.cpp $(INCLDIR)monster.h
 	@echo "compile monster"
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
 
-$(OBJDIR)tower.o : ./src/tower.cpp ./include/tower.h
+$(OBJDIR)tower.o : $(SRCDIR)tower.cpp $(INCLDIR)tower.h
 	@echo "compile tower"
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
 
-$(OBJDIR)batiment.o : ./src/batiment.cpp ./include/batiment.h
+$(OBJDIR)batiment.o : $(SRCDIR)batiment.cpp $(INCLDIR)batiment.h
 	@echo "compile batiment"
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
 
-$(OBJDIR)timer.o : ./src/timer.cpp ./include/timer.h
+$(OBJDIR)timer.o : $(SRCDIR)timer.cpp $(INCLDIR)timer.h
 	@echo "compile timer"
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
 
-$(OBJDIR)texture.o : ./src/texture.cpp ./include/texture.h
-	@echo "compile texture"
+$(OBJDIR)money.o : $(SRCDIR)money.cpp $(INCLDIR)money.h
+	@echo "compile money"
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
 
 
-$(OBJDIR)main.o : ./src/main.cpp $(OBJDIR)map.o $(OBJDIR)node.o $(OBJDIR)entity.o $(OBJDIR)monster.o $(OBJDIR)tower.o $(OBJDIR)batiment.o $(OBJDIR)timer.o
+$(OBJDIR)main.o : $(SRCDIR)main.cpp $(OBJDIR)map.o $(OBJDIR)node.o $(OBJDIR)entity.o $(OBJDIR)monster.o $(OBJDIR)tower.o $(OBJDIR)batiment.o $(OBJDIR)timer.o $(OBJDIR)money.o
 	@echo "compile main"
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
