@@ -24,11 +24,11 @@
         return type;
     }
 
-    vector<int> Node::get_color_rgb() {
+    vector<unsigned int> Node::get_color_rgb() {
         return color_rgb;
     };
 
-    int Node::get_one_color_rgb(int i) {
+    unsigned int Node::get_one_color_rgb(int i) {
         return color_rgb[i];
     }
 
@@ -53,12 +53,12 @@
         type = new_type;
     }
 
-    void Node::set_color_rgb(vector<int> color) {
+    void Node::set_color_rgb(vector<unsigned int> color) {
         color_rgb = color;
     }
 
     void Node::set_linked_points(vector<int> points) {
-        linked_points = linked_points;
+        linked_points = points;
     }
 
     void Node::set_one_linked_point(int point) {

@@ -22,8 +22,8 @@ class Entity {
         int get_y();
 
     //setters
-        void set_X(int x);
-        void set_Y(int y);
+        void set_x(int x);
+        void set_y(int y);
 
     //lol
         void update();

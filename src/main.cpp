@@ -75,12 +75,11 @@
 
 
 int main(int argc, char const *argv[]) {
+	Map * newmap = new Map;
 	char const *itd_map_name = "data/carte1.itd";
 	char const *ppm_map_name = "images/carte1.ppm";
 
-	vector<Node>* Tab_Node = new vector<Node>;
-
-	int itd_ok = check_itd(itd_map_name, Tab_Node);
+	int itd_ok = check_itd(itd_map_name, newmap);
 	if (itd_ok == 0){
 		printf("Error while reading itd file, programm is over.\n");
 		return 0;
@@ -90,7 +89,7 @@ int main(int argc, char const *argv[]) {
 
 	
 
-	cout << (*Tab_Node)[0].get_pos_x() << "\n";
+	cout << (*newmap).get_one_node_TabNode(0).get_pos_x() << "\n";
     //unsigned int x_mouse = 0, y_mouse = 0;
 
 
@@ -100,18 +99,31 @@ int main(int argc, char const *argv[]) {
     printf("%f\n",newtower.get_power());
 
     //loadMap
-    Map * newmap = new Map;
-    load_check_Map(ppm_map_name,newmap);
+    load_check_Map(ppm_map_name, newmap);
     cout << newmap->get_width();
 
-//ICI LE SEGFAULT SE PASSE À CAUSE DU 4EME NOEUD SOIT I =4 SI ON PRENDS *ppm_map_path_name = "images/carte01.ppm" plus haut
-	for ( unsigned int i=0; i < Tab_Node->size(); i++) {
-		check_node_color( (*Tab_Node)[i], *newmap );
+
+	for ( unsigned int i=0; i < (*newmap).get_TabNode().size(); i++) {
+		check_node_color( (*newmap).get_one_node_TabNode(i), *newmap );
 	}
+
+	cout << "début problème";
+
+	//for ( unsigned int j=1; j < (*newmap).get_TabNode().size(); j++) {
+
+
+		Node node1 = (*newmap).get_one_node_TabNode(0);
+		cout << node1.get_pos_x();
+		Node node2 = (*newmap).get_one_node_TabNode(1);
+		cout << node2.get_pos_x();
+
+		if (bressenham(node1, node2, newmap) != true) {
+			cout << "Y a encore du chemin à faire.. lol on check le chemin";
+		}
+	
 
 
 	delete(newmap);
-	delete Tab_Node;
 // 	/* Initialisation de la SDL */
 //     if(-1 == SDL_Init(SDL_INIT_VIDEO)) 
 //     {
