@@ -137,7 +137,6 @@ void open_help(GLuint* texture_wdw){
 
 void draw_tower(GLuint* texture_tower, int x, int y){
     if (NULL != texture_tower){
-        printf("ouaip\n");
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, *texture_tower);
         glBegin(GL_QUADS);
@@ -167,6 +166,9 @@ void draw_tower(GLuint* texture_tower, int x, int y){
 int main(int argc, char const *argv[]) {
 	char const *itd_map_name = "data/carte1.itd";
 	char const *ppm_map_name = "images/carte1.ppm";
+
+
+    vector<Tower> tower_array = vector<Tower>();
 
 
     float new_x = 0;
@@ -304,7 +306,7 @@ int main(int argc, char const *argv[]) {
 
 
 
-       glPushMatrix();
+        glPushMatrix();
             draw_help(&texture_help_button);
         glPopMatrix();
 
@@ -315,6 +317,50 @@ int main(int argc, char const *argv[]) {
                 open_help(&texture_help_wdw);
             glPopMatrix();
         }
+
+        for (unsigned int i = 0; i<tower_array.size(); i++){
+            TYPE_TOWER type = tower_array[i].get_type_tower();
+            int x = (-1 + 2. * tower_array[i].get_x() / (float) surface->w) * GL_VIEW_WIDTH / 2.;
+            int y = -(-1 + 2. * tower_array[i].get_y() / (float) surface->h) * GL_VIEW_HEIGHT / 2.; 
+            if(type == ROCKET){
+                glPushMatrix();
+                    draw_tower(&texture_red_tower, x, y);
+                glPopMatrix();
+            } else if(type == LASER){
+                glPushMatrix();
+                    draw_tower(&texture_green_tower, x, y);
+                glPopMatrix();
+            } else if(type == MACHINEGUN){
+                glPushMatrix();
+                    draw_tower(&texture_yellow_tower, x, y);
+                glPopMatrix();
+            } else if(type == HYBRID){
+                glPushMatrix();
+                    draw_tower(&texture_blue_tower, x, y);
+                glPopMatrix();
+            }
+        }
+
+
+
+
+
+
+
+
+        glPushMatrix();
+            draw_help(&texture_help_button);
+        glPopMatrix();
+
+
+
+        if(help_needed){
+            glPushMatrix();
+                open_help(&texture_help_wdw);
+            glPopMatrix();
+        }
+
+
 
 
 
@@ -367,29 +413,28 @@ int main(int argc, char const *argv[]) {
 
 
                     if(r_pressed){
-                        Tower newtower(e.button.x, e.button.y, ROCKET, 8.0, 2.0, 3.0, 6);
-                        printf("Red tower created\n");
-                        draw_tower(&texture_red_tower, e.button.x, e.button.y);
+                        Tower rocketTower = Tower(e.button.x, e.button.y, ROCKET, 8.0, 2.0, 3.0, 6);
+                        tower_array.push_back(rocketTower);
+                        r_pressed = g_pressed = b_pressed = y_pressed = false;
                     }
 
                     if(g_pressed){
-                        Tower newtower(e.button.x, e.button.y, LASER, 5.0, 1.0, 8.0, 5);
-                        printf("Green tower created\n");
+                        Tower laserTower = Tower(e.button.x, e.button.y, LASER, 5.0, 1.0, 8.0, 5);
+                        tower_array.push_back(laserTower);
+                        r_pressed = g_pressed = b_pressed = y_pressed = false;
                     }
 
                     if(b_pressed){
-                        Tower newtower(e.button.x, e.button.y, HYBRID, 3.0, 8.0, 6.0, 6);
-                        printf("Blue tower created\n");
+                        Tower hybridTower = Tower(e.button.x, e.button.y, HYBRID, 3.0, 8.0, 6.0, 6);
+                        tower_array.push_back(hybridTower);
+                        r_pressed = g_pressed = b_pressed = y_pressed = false;
                     }
 
                     if(y_pressed){
-                        Tower newtower(e.button.x, e.button.y, MACHINEGUN, 2.0, 2.0, 4.0, 3);
-                        printf("Yellow tower created\n");
+                        Tower machineTower = Tower(e.button.x, e.button.y, MACHINEGUN, 2.0, 2.0, 4.0, 3);
+                        tower_array.push_back(machineTower);
+                        r_pressed = g_pressed = b_pressed = y_pressed = false;
                     }
-
-
-
-
 
 
                     break;
@@ -414,6 +459,9 @@ int main(int argc, char const *argv[]) {
                         printf("y pressed\n");
                         y_pressed = true;
                         r_pressed = g_pressed = b_pressed = false;
+                    } else {
+                        printf("no tower\n");
+                        r_pressed = g_pressed = b_pressed = y_pressed = false;
                     }
                     break;
 
