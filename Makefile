@@ -7,7 +7,7 @@ SRCDIR		=	./src/
 INCLDIR = ./include/
 OBJDIR		=	./obj/
 BIN	= ./bin/ImacTowerDefense
-OBJ    = $(OBJDIR)main.o $(OBJDIR)node.o $(OBJDIR)map.o $(OBJDIR)entity.o $(OBJDIR)monster.o $(OBJDIR)tower.o $(OBJDIR)batiment.o $(OBJDIR)timer.o $(OBJDIR)money.o
+OBJ    = $(OBJDIR)main.o $(OBJDIR)node.o $(OBJDIR)map.o $(OBJDIR)entity.o $(OBJDIR)monster.o $(OBJDIR)tower.o $(OBJDIR)batiment.o $(OBJDIR)timer.o $(OBJDIR)money.o $(OBJDIR)texture.o
 RM     = rm -f
 DIRNAME = $(shell basename $$PWD)
 BACKUP  = $(shell date +`basename $$PWD`-%m.%d.%H.%M.zip)
@@ -61,8 +61,13 @@ $(OBJDIR)money.o : $(SRCDIR)money.cpp $(INCLDIR)money.h
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
 
+$(OBJDIR)texture.o : $(SRCDIR)texture.cpp $(INCLDIR)texture.h
+	@echo "compile texture"
+	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
+	@echo "done..."
 
-$(OBJDIR)main.o : $(SRCDIR)main.cpp $(OBJDIR)map.o $(OBJDIR)node.o $(OBJDIR)entity.o $(OBJDIR)monster.o $(OBJDIR)tower.o $(OBJDIR)batiment.o $(OBJDIR)timer.o $(OBJDIR)money.o
+
+$(OBJDIR)main.o : $(SRCDIR)main.cpp $(OBJDIR)map.o $(OBJDIR)node.o $(OBJDIR)entity.o $(OBJDIR)monster.o $(OBJDIR)tower.o $(OBJDIR)batiment.o $(OBJDIR)timer.o $(OBJDIR)money.o $(OBJDIR)texture.o
 	@echo "compile main"
 	$(CC) $(CFLAGS) -o $@ -c $< $(LDFLAGS)
 	@echo "done..."
