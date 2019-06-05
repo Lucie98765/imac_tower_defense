@@ -1,10 +1,11 @@
 #include "../include/tower.h"
-#include "../include/batiment.h"
 #include "../include/headers.h"
 #include "../include/batiment.h"
 #include "../include/map.h"
 #include "../include/node.h"
 #include "../include/texture.h"
+#include "../include/monster.h"
+#include "../include/entity.h"
 
 
 /* Dimensions initiales et titre de la fenetre */
@@ -59,25 +60,30 @@ void reshape(SDL_Surface** surface, unsigned int width, unsigned int height)
 }
 
 
-void drawSquare(float x, float y) {
+void drawSquare(float x, float y, GLuint* texture) {
 
-    glBegin(GL_TRIANGLE_FAN);
-    if (r_pressed){
-        glColor3ub(255, 0, 0);
-    } else if ( g_pressed){
-        glColor3ub(0, 255, 0);
-    } else if (b_pressed){
-        glColor3ub(0, 0, 255);
-    } else if (y_pressed){
-        glColor3ub(255, 255, 0);
+    if (texture != NULL){   
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, *texture);
+        glBegin(GL_QUADS);
+            glColor3ub(255,255,255);
+            glTexCoord2f(0, 1);
+            glVertex2f( x-15, y-30);
+        
+            glTexCoord2f(1, 1);
+            glVertex2f( x+15, y-30);
+        
+            glTexCoord2f(1, 0);
+            glVertex2f( x+15, y+30);
+        
+            glTexCoord2f(0, 0);
+            glVertex2f( x-15, y+30);
+        glEnd();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
     } else {
-        glColor3ub(255, 255, 255);
+        printf("display of cursor failed\n");
     }
-    glVertex2f( x+15, y-15);
-    glVertex2f( x+15, y+15);
-    glVertex2f( x-15, y+15);
-    glVertex2f( x-15, y-15);
-    glEnd();
 
 }
 
@@ -137,21 +143,22 @@ void open_help(GLuint* texture_wdw){
 
 void draw_tower(GLuint* texture_tower, int x, int y){
     if (NULL != texture_tower){
+        
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, *texture_tower);
         glBegin(GL_QUADS);
             glColor3ub(255,255,255);
             glTexCoord2f(0, 1);
-            glVertex2f(x-15, y-15.);
+            glVertex2f(x-15, y-32.);
         
             glTexCoord2f(1, 1);
-            glVertex2f(x+15., y-15.);
+            glVertex2f(x+15., y-32.);
         
             glTexCoord2f(1, 0);
-            glVertex2f(x+15., y+15.);
+            glVertex2f(x+15., y+31.);
         
             glTexCoord2f(0, 0);
-            glVertex2f(x-15., y+15.);
+            glVertex2f(x-15., y+31.);
         glEnd();
 
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -161,22 +168,37 @@ void draw_tower(GLuint* texture_tower, int x, int y){
     }
 }
 
+void write(int x, int y,  char const *string) {
+
+        char const *c;
+        glColor3ub(0,0,0);
+        // Positionne le premier caractère de la chaîne
+        glRasterPos2f(x, y);
+        for (c = string; *c != '\0'; c++)
+            glutBitmapCharacter(GLUT_BITMAP_8_BY_13, *c); // Affiche chaque caractère de la chaîne
+
+        // Réinitialise la position du premier caractère de la chaîne
+        glRasterPos2f(0, 0);
+}
 
 
-int main(int argc, char const *argv[]) {
+
+
+
+
+
+int main(int argc, char *argv[]) {
 	Map * newmap = new Map;
 	char const *itd_map_name = "data/carte1.itd";
 	char const *ppm_map_name = "images/carte1.ppm";
 
 
     vector<Tower> tower_array = vector<Tower>();
+    vector<Monster*> monster_array = vector<Monster*>();
 
 
     float new_x = 0;
     float new_y = 0;
-
-	vector<Node>* Tab_Node = new vector<Node>;
-	int itd_ok = check_itd(itd_map_name, Tab_Node);
 
 	int itd_ok = check_itd(itd_map_name, newmap);
 	if (itd_ok == 0){
@@ -184,27 +206,35 @@ int main(int argc, char const *argv[]) {
 		return 0;
 	}
 
-	cout << (*Tab_Node)[0].get_pos_x() << "\n";
-	delete Tab_Node;
     unsigned int x_mouse = 0, y_mouse = 0;
 
 
-	
 
 	cout << (*newmap).get_one_node_TabNode(0).get_pos_x() << "\n";
-    //unsigned int x_mouse = 0, y_mouse = 0;
-
-
-	//verifier_ppm
-
-	Tower newtower(4,5,ROCKET,8.0,2.0,3.0,6);
-    printf("%f\n",newtower.get_power());
 
     //loadMap
     load_check_Map(ppm_map_name, newmap);
     cout << newmap->get_width();
+
+    for ( unsigned int i=0; i < (*newmap).get_TabNode().size(); i++) {
+        check_node_color( (*newmap).get_one_node_TabNode(i), *newmap );
+    }
+
+    Node node1 = (*newmap).get_one_node_TabNode(0);
+    cout << node1.get_pos_x();
+    Node node2 = (*newmap).get_one_node_TabNode(1);
+    cout << node2.get_pos_x();
+
     delete(newmap);
     
+
+    int x_monster = 14, y_monster = 74;
+
+    Monster *monster_1 = new Monster(x_monster,y_monster,MONSTER1,0,15+0,3,5,0.75,1,1,1.25);
+    monster_array.push_back(monster_1);
+
+
+
 
     /* Initializing SDL */
     if(-1 == SDL_Init(SDL_INIT_VIDEO)) 
@@ -214,68 +244,40 @@ int main(int argc, char const *argv[]) {
             "Impossible d'initialiser la SDL. Fin du programme.\n");
         exit(EXIT_FAILURE);
     }
-  
     /* Openning a window */
     SDL_Surface* surface;
     reshape(&surface, WINDOW_WIDTH, WINDOW_HEIGHT);
     glClear(GL_COLOR_BUFFER_BIT);
-
-	for ( unsigned int i=0; i < (*newmap).get_TabNode().size(); i++) {
-		check_node_color( (*newmap).get_one_node_TabNode(i), *newmap );
-	}
-
+    glutInit(&argc, argv); // initialisation de GLUTs
+	
     /* Initializing the title of the window */
     SDL_WM_SetCaption(WINDOW_TITLE, NULL);
-	cout << "début problème";
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//for ( unsigned int j=1; j < (*newmap).get_TabNode().size(); j++) {
 
 
-		Node node1 = (*newmap).get_one_node_TabNode(0);
-		cout << node1.get_pos_x();
-		Node node2 = (*newmap).get_one_node_TabNode(1);
-		cout << node2.get_pos_x();
+		
 
-		if (bressenham(node1, node2, newmap) != true) {
+		/*if (bressenham(node1, node2, newmap) != true) {
 			cout << "Y a encore du chemin à faire.. lol on check le chemin";
-		}
+		}*/
 	
-
-
-	delete(newmap);
-// 	/* Initialisation de la SDL */
-//     if(-1 == SDL_Init(SDL_INIT_VIDEO)) 
-//     {
-//         fprintf(
-//             stderr, 
-//             "Impossible d'initialiser la SDL. Fin du programme.\n");
-//         exit(EXIT_FAILURE);
-//     }
-  
-//     /* Ouverture d'une fenetre et creation d'un contexte OpenGL */
-//     SDL_Surface* surface;
-//     reshape(&surface, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-
 
 
     /* MAP TEXTURE */
     char const *image_path = "images/carte03.png";
     GLuint texture_map_BG = createTexture(image_path);
     
-
-
     /* HELP BUTTON TEXTURE */
     char const *help_btn_path = "images/help_button.png";
     GLuint texture_help_button = createTexture(help_btn_path);
-    
-
 
     /* HELP WINDOW TEXTURE*/
     char const *help_wdw_path = "images/help_window2.png";
     GLuint texture_help_wdw= createTexture(help_wdw_path);
-
-
 
     /* RED TOWER TEXTURE */
     char const *red_tower_path = "images/red_tower.png";
@@ -293,14 +295,20 @@ int main(int argc, char const *argv[]) {
     char const *yellow_tower_path = "images/yellow_tower.png";
     GLuint texture_yellow_tower = createTexture(yellow_tower_path);
 
+    /* CURSOR TEXTURE */
+    char const *cursor_path = "images/cursor.png";
+    GLuint texture_cursor = createTexture(cursor_path);
 
 
+    
 
   
     /* Main loop */
     int loop = 1;
     while(loop) 
     {
+        //usleep(10000);
+        monster_1->move(monster_1->get_x(), monster_1->get_y(), 385, 74);
         /* Recuperation du temps au debut de la boucle */
         Uint32 startTime = SDL_GetTicks();
 
@@ -337,25 +345,40 @@ int main(int argc, char const *argv[]) {
 
 
 
+        if (r_pressed){
+            glPushMatrix();
+                drawSquare(new_x, new_y, &texture_red_tower);
+            glPopMatrix();
+        } else if ( g_pressed){
+            glPushMatrix();
+                drawSquare(new_x, new_y, &texture_green_tower);
+            glPopMatrix();
+        } else if (b_pressed){
+            glPushMatrix();
+                drawSquare(new_x, new_y, &texture_blue_tower);
+            glPopMatrix();
+        } else if (y_pressed){
+            glPushMatrix();
+                drawSquare(new_x, new_y, &texture_yellow_tower);
+            glPopMatrix();
+        } else {
+            glPushMatrix();
+                drawSquare(new_x, new_y, &texture_cursor);
+            glPopMatrix();
+        }
 
-        glPushMatrix();
-            drawSquare(new_x, new_y);
-        glPopMatrix();
-
-
+        
 
 
         glPushMatrix();
             draw_help(&texture_help_button);
         glPopMatrix();
 
+       
 
-
-        if(help_needed){
-            glPushMatrix();
-                open_help(&texture_help_wdw);
-            glPopMatrix();
-        }
+        char const *string = "bonsoir je suis un texte";
+        
+        write(200, 200, string);
 
         for (unsigned int i = 0; i<tower_array.size(); i++){
             TYPE_TOWER type = tower_array[i].get_type_tower();
@@ -380,10 +403,13 @@ int main(int argc, char const *argv[]) {
             }
         }
 
-
-
-
-
+        for (unsigned int i = 0; i<monster_array.size(); i++){
+            int x = (-1 + 2. * monster_array[i]->get_x() / (float) surface->w) * GL_VIEW_WIDTH / 2.;
+            int y = -(-1 + 2. * monster_array[i]->get_y() / (float) surface->h) * GL_VIEW_HEIGHT / 2.; 
+                glPushMatrix();
+                    draw_tower(&texture_blue_tower, x, y);
+                glPopMatrix();
+        }
 
 
 
@@ -392,12 +418,17 @@ int main(int argc, char const *argv[]) {
         glPopMatrix();
 
 
-
         if(help_needed){
             glPushMatrix();
                 open_help(&texture_help_wdw);
             glPopMatrix();
         }
+
+
+
+
+
+
 
 
 
@@ -483,24 +514,29 @@ int main(int argc, char const *argv[]) {
                 case SDL_KEYDOWN:
                     printf("touche pressee (code = %d)\n", e.key.keysym.sym);
                     if(114 == e.key.keysym.sym){
-                        printf("R pressed\n");
+                        printf("r pressed\n");
                         r_pressed = true;
                         g_pressed = b_pressed = y_pressed = false;
+                        drawSquare(new_x, new_y, &texture_red_tower);
                     } else if(103 == e.key.keysym.sym){
                         printf("g pressed\n");
                         g_pressed = true;
                         r_pressed = b_pressed = y_pressed = false;
+                        drawSquare(new_x, new_y, &texture_green_tower);
                     } else if(98 == e.key.keysym.sym){
                         printf("b pressed\n");
                         b_pressed = true;
                         r_pressed = g_pressed = y_pressed = false;
+                        drawSquare(new_x, new_y, &texture_blue_tower);
                     } else if(121 == e.key.keysym.sym){
                         printf("y pressed\n");
                         y_pressed = true;
                         r_pressed = g_pressed = b_pressed = false;
+                        drawSquare(new_x, new_y, &texture_yellow_tower);
                     } else {
                         printf("no tower\n");
                         r_pressed = g_pressed = b_pressed = y_pressed = false;
+                        drawSquare(new_x, new_y, &texture_cursor);
                     }
                     break;
 
@@ -538,6 +574,11 @@ int main(int argc, char const *argv[]) {
     free_texture(texture_green_tower);
     free_texture(texture_blue_tower);
     free_texture(texture_yellow_tower);
+    free_texture(texture_cursor);
+
+
+    glDisable(GL_BLEND);
+
 
     /* Liberation des ressources associees a la SDL */ 
     SDL_Quit();

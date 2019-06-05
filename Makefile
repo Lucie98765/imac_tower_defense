@@ -2,7 +2,7 @@
 CC     = g++
 CFLAGS = -Wall -O2 -Wno-unused-result -g
 LIB    = -lm -lSDL_image
-LDFLAGS	= -lSDL -lGLU -lGL -lm
+LDFLAGS	= -lSDL -lGLU -lGL -lm -lglut
 SRCDIR		=	./src/
 INCLDIR = ./include/
 OBJDIR		=	./obj/

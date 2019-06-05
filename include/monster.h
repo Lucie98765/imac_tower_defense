@@ -74,7 +74,7 @@ Si r = 100 : reçoit 100% de l'attaque : pas résistant du tout */
 
 
 //other methods
-		void move(int xAct, int yAct);
+		void move(int x1, int y1, int x2, int y2);
 
 		//represent the PV barre
 		void gauge_Pv();

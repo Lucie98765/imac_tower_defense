@@ -106,9 +106,47 @@
     //calculer le chemin le plus court en distance et en temps
     //choisir en conséquence
 
-    void Monster::move(int xAct, int yAct) {
-
-    };
+    void Monster::move(int x1, int y1, int x2, int y2) {
+        cout << "houston we have a pb\n";
+        if ( abs(x1 - x2) <= 2 ) {
+            cout << abs(x1 - x2) << "\n";
+            x1=x2;
+            if (y1<y2)
+                while ( y1 <= y2 ) {
+                    sleep(this->get_speed());
+                    y1=y1-1;
+                    set_y(y1);
+                    cout << "( " << this->get_x() << "," <<  this->get_y() << "\n";
+                }
+            else {
+                while ( y1>=y2 ) {
+                    sleep(this->get_speed());
+                    y1=y1+1;
+                    set_y(y1);
+                    cout << "( " << this->get_x() << "," <<  this->get_y() << " )\n";
+                }
+            }
+        }
+        if( abs(y1-y2) <= 2) {
+            cout << abs(y1 - y2) << "\n";
+            y1=y2;
+            if (x1<x2)
+                while ( x1 <= x2 ) {
+                    x1=x1+1;
+                    sleep(this->get_speed());
+                    set_x(x1);
+                    cout << "( " << this->get_x() << "," <<  this->get_y() << " )\n";
+                }
+            else {
+                while ( x1 >= x2 ) {
+                    sleep(this->get_speed());
+                    x1=x1-1;
+                    set_x(x1);
+                    cout << "( " << this->get_x() << "," <<  this->get_y() << " )\n";
+                }
+            }
+        }
+    }
 	
     void Monster::gauge_Pv() {
         //Partie DSL 
