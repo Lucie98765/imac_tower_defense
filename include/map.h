@@ -21,6 +21,8 @@ class Map{
     vector<Entity> path_pixel;
     vector<unsigned int> path_color;
     vector<unsigned int> node_color;
+    vector<unsigned int> in_node_color;
+    vector<unsigned int> out_node_color;
     vector<Node> TabNode;
     vector<unsigned int> construct_field;
   
@@ -37,6 +39,10 @@ class Map{
       vector<Entity> get_path_pixel();
 
       vector<unsigned int> get_node_color();
+
+      vector<unsigned int> get_in_node_color();
+
+      vector<unsigned int> get_out_node_color();
 
       vector<unsigned int> get_path_color();
 
@@ -59,6 +65,10 @@ class Map{
 
       void set_node_color(vector<unsigned int> newvalue);
 
+      void set_in_node_color(vector<unsigned int> newvalue);
+
+      void set_out_node_color(vector<unsigned int> newvalue);
+
       void set_TabNode(vector<Node> newTab);
       void set_one_node_TabNode(Node newNode);
 
@@ -77,6 +87,9 @@ void load_check_Map(char const *pathimage, Map* map);
 int check_node_color(Node node, Map map);
 bool check_path_color(int x, int y, Map map);
 bool enter_exit(vector<Node> nodeList);
+bool check_out_node_color(int x, int y, Map map);
+bool check_in_node_color(int x, int y, Map map);
+bool check_node_color2(int x, int y, Map map);
 
 int check_itd(char const *nameFile, Map * map);
 

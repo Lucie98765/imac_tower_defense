@@ -195,8 +195,69 @@ bool check_path_color(int x, int y, Map map) {
 
 
 
+// bool bressenham(Node point1, Node point2, Map* map) {
+//     Entity *pixel = new Entity;
+//     cout << "yo";
+//     int x1 = point1.get_pos_x();
+//     cout << x1;
+//     int y1 = point1.get_pos_y();
+//     cout << y1;
+//     int x2 = point2.get_pos_x();
+//     int y2 = point2.get_pos_y();
+//     pixel->set_x(x1);
+//     pixel->set_y(y1);
+//     map->set_path_one_pixel(*pixel);
+
+//     //Bressenham Algorithm (optimized)
+//     int   e = x2 - x1, //-e(0,1)
+//           dx  = e*2, //-e(0,1)
+//           dy  = (y2 - y1)*2; //e(1,0)
+//     if ( x1<= x2) {
+//         while (x1 <= x2) {
+//             //tracer segment
+//             x1 = x1+1; //next column pixel
+//             if ( (e - dy) <= 0 ) { //next pixel error on the same range 
+//                 y1 = y1 +1; //Choose the next pixel on the superior range
+//                 e = e + dx; //ajusts the commited error on the new range
+//                 if ( check_path_color(x1,y1, *map) == false ) { //check if the 
+//                     cout << "You quit the path! Game Over";
+//                     return false;
+//                 }
+//             }
+//                     pixel->set_x(x1);
+//                     pixel->set_x(y1);
+//                     map->set_path_one_pixel(*pixel);
+//         }
+//     }
+//     else {
+//         while (x1 >= x2) {
+//             //tracer segment
+//             x1 = x1-1; //next column pixel
+//             if ( (e - dy) <= 0 ) { //next pixel error on the same range 
+//                 y1 = y1 +1; //Choose the next pixel on the superior range
+//                 e = e + dx; //ajusts the commited error on the new range
+//                 if ( check_path_color(x1,y1, *map) == false ) { //check if the 
+//                     cout << "You quit the path! Game Over";
+//                     delete pixel;
+//                     return false;
+//                 }
+//                 else {
+//                     pixel->set_x(x1);
+//                     pixel->set_y(y1);
+//                     map->set_path_one_pixel(*pixel);
+//                 }
+//             }
+//         }
+//     }
+
+//     delete pixel;
+//     return true;
+// }
+
+
+//we suppose, we just have horizontal and vertical movement
 bool bressenham(Node point1, Node point2, Map* map) {
-    Entity *pixel;
+    Entity *pixel = new Entity;
     cout << "yo";
     int x1 = point1.get_pos_x();
     cout << x1;
@@ -208,49 +269,10 @@ bool bressenham(Node point1, Node point2, Map* map) {
     pixel->set_y(y1);
     map->set_path_one_pixel(*pixel);
 
-    //Bressenham Algorithm (optimized)
-    int   e = x2 - x1, //-e(0,1)
-          dx  = e*2, //-e(0,1)
-          dy  = (y2 - y1)*2; //e(1,0)
-    if ( x1<= x2) {
-        while (x1 <= x2) {
-            //tracer segment
-            x1 = x1+1; //next column pixel
-            if ( (e - dy) <= 0 ) { //next pixel error on the same range 
-                y1 = y1 +1; //Choose the next pixel on the superior range
-                e = e + dx; //ajusts the commited error on the new range
-                if ( check_path_color(x1,y1, *map) == false ) { //check if the 
-                    cout << "You quit the path! Game Over";
-                    return false;
-                }
-                else {
-                    pixel->set_x(x1);
-                    pixel->set_x(y1);
-                    map->set_path_one_pixel(*pixel);
-                }
-            }
-        }
-    }
-    else {
-        while (x1 >= x2) {
-            //tracer segment
-            x1 = x1-1; //next column pixel
-            if ( (e - dy) <= 0 ) { //next pixel error on the same range 
-                y1 = y1 +1; //Choose the next pixel on the superior range
-                e = e + dx; //ajusts the commited error on the new range
-                if ( check_path_color(x1,y1, *map) == false ) { //check if the 
-                    cout << "You quit the path! Game Over";
-                    return false;
-                }
-                else {
-                    pixel->set_x(x1);
-                    pixel->set_y(y1);
-                    map->set_path_one_pixel(*pixel);
-                }
-            }
-        }
-    }
-    return true;
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
+
+    int e_x = d
 }
 
 bool enter_exit(vector<Node> nodeList) {
