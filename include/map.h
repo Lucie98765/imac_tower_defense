@@ -17,30 +17,56 @@ class Map{
   private:
     unsigned int width;
     unsigned int height;
-    vector<int> data;
-    vector<int> path_color;
-    vector<int> node_color;
-    vector<int> construct_field;
+    vector<unsigned int> data;
+    vector<Entity> path_pixel;
+    vector<unsigned int> path_color;
+    vector<unsigned int> node_color;
+    vector<Node> TabNode;
+    vector<unsigned int> construct_field;
   
   public:
       Map();
     
       //getter
       unsigned int get_width();
+
       unsigned int get_height();
-      vector<int> get_data();
-      vector<int> get_node();
-      vector<int> get_path();
-      vector<int> get_construct();
-      int get_one_value_data (int i);
+
+      vector<unsigned int> get_data();
+
+      vector<Entity> get_path_pixel();
+
+      vector<unsigned int> get_node_color();
+
+      vector<unsigned int> get_path_color();
+
+      vector<unsigned int> get_construct_color();
+
+      vector<Node> get_TabNode();
+      Node get_one_node_TabNode(int i);
+
+      unsigned int get_one_value_data(int i);
 
       //setter
       void set_width(unsigned int newvalue);
+
       void set_height(unsigned int newvalue);
-      void set_data(vector<int> newvalue);
-      void set_node(vector<int> newvalue);
-      void set_path(vector<int> newvalue);
-      void set_construct(vector<int> newvalue);
+
+      void set_data(vector<unsigned int> newvalue);
+
+      void set_path_pixel(vector<Entity> path);
+      void set_path_one_pixel(Entity pixel);
+
+      void set_node_color(vector<unsigned int> newvalue);
+
+      void set_TabNode(vector<Node> newTab);
+      void set_one_node_TabNode(Node newNode);
+
+      void set_one_value_TabNode(vector<Node> newTab);
+
+      void set_path_color(vector<unsigned int> newvalue);
+      
+      void set_construct_color(vector<unsigned int> newvalue);
 
       //other methods
 };
@@ -49,12 +75,12 @@ void load_check_Map(char const *pathimage, Map* map);
 
 
 int check_node_color(Node node, Map map);
-bool check_path_color(int x, int y, vector<int> pathcolor, Map map);
-bool enter_exit(vector<Node>* nodeList);
+bool check_path_color(int x, int y, Map map);
+bool enter_exit(vector<Node> nodeList);
 
-int check_itd(char const *nameFile, vector<Node> *TabNode);
+int check_itd(char const *nameFile, Map * map);
 
-bool bressenham(Node point1, Node point2, vector<int> path_color, vector<Entity>* path, Map* map);
+bool bressenham(Node point1, Node point2, Map* map);
 
 
 

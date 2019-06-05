@@ -11,7 +11,7 @@ class Node {
 		int pos_x;
 		int pos_y;
 		int type;
-		vector<int> color_rgb;
+		vector<unsigned int> color_rgb;
 		vector <int> linked_points;
 
 	public:
@@ -28,8 +28,8 @@ class Node {
 			int get_pos_x();
 			int get_pos_y();
 			int get_type();
-			vector<int> get_color_rgb();
-			int get_one_color_rgb(int i);
+			vector<unsigned int> get_color_rgb();
+			unsigned int get_one_color_rgb(int i);
 			vector<int> get_linked_points();
 
 
@@ -39,7 +39,7 @@ class Node {
 			void set_pos_x(int new_x);
 			void set_pos_y(int new_y);
 			void set_type(int new_type);
-			void set_color_rgb(vector<int> color);
+			void set_color_rgb(vector<unsigned int> color);
 			void set_linked_points(vector<int> points);
 			void set_one_linked_point(int point);
 		

@@ -164,6 +164,7 @@ void draw_tower(GLuint* texture_tower, int x, int y){
 
 
 int main(int argc, char const *argv[]) {
+	Map * newmap = new Map;
 	char const *itd_map_name = "data/carte1.itd";
 	char const *ppm_map_name = "images/carte1.ppm";
 
@@ -177,6 +178,7 @@ int main(int argc, char const *argv[]) {
 	vector<Node>* Tab_Node = new vector<Node>;
 	int itd_ok = check_itd(itd_map_name, Tab_Node);
 
+	int itd_ok = check_itd(itd_map_name, newmap);
 	if (itd_ok == 0){
 		printf("Error while reading itd file, programm is over.\n");
 		return 0;
@@ -187,14 +189,19 @@ int main(int argc, char const *argv[]) {
     unsigned int x_mouse = 0, y_mouse = 0;
 
 
+	
+
+	cout << (*newmap).get_one_node_TabNode(0).get_pos_x() << "\n";
+    //unsigned int x_mouse = 0, y_mouse = 0;
+
+
 	//verifier_ppm
 
 	Tower newtower(4,5,ROCKET,8.0,2.0,3.0,6);
     printf("%f\n",newtower.get_power());
 
     //loadMap
-    Map * newmap = new Map;
-    load_check_Map(ppm_map_name,newmap);
+    load_check_Map(ppm_map_name, newmap);
     cout << newmap->get_width();
     delete(newmap);
     
@@ -213,9 +220,41 @@ int main(int argc, char const *argv[]) {
     reshape(&surface, WINDOW_WIDTH, WINDOW_HEIGHT);
     glClear(GL_COLOR_BUFFER_BIT);
 
+	for ( unsigned int i=0; i < (*newmap).get_TabNode().size(); i++) {
+		check_node_color( (*newmap).get_one_node_TabNode(i), *newmap );
+	}
+
     /* Initializing the title of the window */
     SDL_WM_SetCaption(WINDOW_TITLE, NULL);
+	cout << "début problème";
 
+	//for ( unsigned int j=1; j < (*newmap).get_TabNode().size(); j++) {
+
+
+		Node node1 = (*newmap).get_one_node_TabNode(0);
+		cout << node1.get_pos_x();
+		Node node2 = (*newmap).get_one_node_TabNode(1);
+		cout << node2.get_pos_x();
+
+		if (bressenham(node1, node2, newmap) != true) {
+			cout << "Y a encore du chemin à faire.. lol on check le chemin";
+		}
+	
+
+
+	delete(newmap);
+// 	/* Initialisation de la SDL */
+//     if(-1 == SDL_Init(SDL_INIT_VIDEO)) 
+//     {
+//         fprintf(
+//             stderr, 
+//             "Impossible d'initialiser la SDL. Fin du programme.\n");
+//         exit(EXIT_FAILURE);
+//     }
+  
+//     /* Ouverture d'une fenetre et creation d'un contexte OpenGL */
+//     SDL_Surface* surface;
+//     reshape(&surface, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 
 

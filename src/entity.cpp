@@ -1,10 +1,5 @@
 #include "../include/entity.h"
-#include <SDL/SDL.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <cstdlib>
-#include <cstdio>
-#include "../include/entity.h"
+#include "../include/headers.h"
 
 
 //contructor
@@ -38,11 +33,11 @@
 	};
 
 //setters
-	void Entity::set_X(int x) {
+	void Entity::set_x(int x) {
 		coord_x = x;
 	};
 
-	void Entity::set_Y(int y) {
+	void Entity::set_y(int y) {
 		coord_y=y;
 	};
 
