@@ -12,10 +12,10 @@
 	#include <SDL/SDL_image.h>
     #include <GL/gl.h>
     #include <GL/glu.h>
-	#include <GL/glut.h>
     #include <new>
    
 	#include <ctype.h>
+	#include <unistd.h>
     #include <cstdio>
     #include <cstdlib>
 	#include <iostream>
@@ -28,7 +28,6 @@
 	#include <iterator>
 	#include <cstring>
 	#include <ctype.h>
-	#include <unistd.h>
 
 	using namespace std;
 

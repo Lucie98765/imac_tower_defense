@@ -43,8 +43,7 @@ Si r = 100 : reçoit 100% de l'attaque : pas résistant du tout */
 		float resistance_tr,
 		float resistance_tg,
 		float resistance_ty,
-		float resistance_tb)
-		;
+		float resistance_tb) ;
 
 //destructor
 	~Monster();
@@ -74,11 +73,13 @@ Si r = 100 : reçoit 100% de l'attaque : pas résistant du tout */
 
 
 //other methods
+
+		//we considere that the path bewteen two nodes is vertical or horizontal
 		void move(int x1, int y1, int x2, int y2);
 
 		//represent the PV barre
 		void gauge_Pv();
-
 };
 
+void wave(vector<Monster>* wave,int number);
 #endif

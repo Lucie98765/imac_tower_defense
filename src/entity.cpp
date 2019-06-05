@@ -34,10 +34,10 @@
 
 //setters
 	void Entity::set_x(int x) {
-		coord_x = x;
+		this->coord_x = x;
 	};
 
 	void Entity::set_y(int y) {
-		coord_y=y;
+		this->coord_y=y;
 	};
 

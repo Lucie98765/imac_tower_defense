@@ -106,6 +106,8 @@
     //calculer le chemin le plus court en distance et en temps
     //choisir en conséquence
 
+
+// <=> bressenham
     void Monster::move(int x1, int y1, int x2, int y2) {
         cout << "houston we have a pb\n";
         if ( abs(x1 - x2) <= 2 ) {
@@ -156,7 +158,7 @@
     };
 
 
-void create_monster(int coord_x, int coord_y, TYPE_MONSTER type, Monster new_monster, int level) {
+Monster create_monster(int coord_x, int coord_y, TYPE_MONSTER type, Monster new_monster, int level) {
     //initiazition monster according to chosen parameters 
     switch (type)
     {
@@ -176,10 +178,24 @@ void create_monster(int coord_x, int coord_y, TYPE_MONSTER type, Monster new_mon
             new_monster = Monster(coord_x,coord_y,type,51,1500,1.5,1000,1,1.5,0.7,0.8);
             break;
         }
-
         default:
             break;
     }
-    
+    return new_monster;
     printf("swtich Monster");
+}
+
+void wave(vector<Monster>* wave,int number) {
+    wave->resize(number);
+    int number_monster1 = rand() % 11;
+    Monster monster1(0,0,MONSTER1,0,15,1,5,0.75,1,1,1.25);
+    Monster monster2(0,0,MONSTER2,0,20,1.2,5,1.25,0.8,1,0.8);
+    for (int i=0; i<number; i++){
+        if (i<=number_monster1) {
+        wave->push_back(monster1);
+        }
+        else {
+            wave->push_back(monster2);
+        }
+    }
 }
