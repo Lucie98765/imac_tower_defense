@@ -26,7 +26,7 @@
 
     vector<unsigned int> Node::get_color_rgb() {
         return color_rgb;
-    };
+    }
 
     unsigned int Node::get_one_color_rgb(int i) {
         return color_rgb[i];
@@ -52,7 +52,6 @@
     void Node::set_type(int new_type) {
         type = new_type;
     }
-
     void Node::set_color_rgb(vector<unsigned int> color) {
         color_rgb = color;
     }

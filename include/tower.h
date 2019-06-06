@@ -62,7 +62,7 @@ class Tower : public Entity
     void set_position(int value_x, int value_y);
 
     //other method
-    void shot(int power, Monster monster, TYPE_TOWER type);
+    void shot(Monster* monster, TYPE_TOWER type, int tower_react);
 
     //PARTIE SDL VISUELLE à voir...
 
@@ -70,5 +70,6 @@ class Tower : public Entity
 };
 
 void create_tower(int coord_x, int coord_y, Tower new_tower);
+void shot_kill_monster(vector<Monster>* wave, vector<Tower>* towers, int tower_react);
 
 #endif

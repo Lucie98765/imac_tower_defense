@@ -49,4 +49,3 @@ class Node {
 
 	Node collectNode(char* sentence,Node* node);
 #endif
-

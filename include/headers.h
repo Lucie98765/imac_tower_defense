@@ -15,6 +15,7 @@
 	#include <GL/glut.h>
     #include <new>
    
+    #include <math.h>
 	#include <ctype.h>
     #include <cstdio>
     #include <cstdlib>

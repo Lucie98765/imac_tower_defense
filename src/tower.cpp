@@ -72,66 +72,84 @@ void Tower::set_price(int value) {
 Tower::~Tower(){};
 
 //methodes
-void Tower::shot(int power, Monster monster, TYPE_TOWER type) {
-    int scope_x_inf = Tower::get_x() - (int)Tower::get_scope();
-    int scope_x_sup = Tower::get_x() + (int)Tower::get_scope();
-    int scope_y_inf = Tower::get_y() - (int)Tower::get_scope();
-    int scope_y_sup = Tower::get_y() + (int)Tower::get_scope();
-    if ( (monster.get_x() < scope_x_sup) && (monster.get_x() > scope_x_inf)
-        && (monster.get_y() < scope_y_sup) && (monster.get_y() > scope_y_inf) )
+void Tower::shot(Monster* monster, TYPE_TOWER type, int tower_react) {
+    int scope_x_inf = this->get_x() - (int)this->get_scope();
+    int scope_x_sup = this->get_x() + (int)this->get_scope();
+    int scope_y_inf = this->get_y() - (int)this->get_scope();
+    int scope_y_sup = this->get_y() + (int)this->get_scope();
+    if ( (monster->get_x() < scope_x_sup) && (monster->get_x() > scope_x_inf)
+        && (monster->get_y() < scope_y_sup) && (monster->get_y() > scope_y_inf) )
     {
-        switch (Tower::get_type_tower())
+        switch (this->get_type_tower())
         {
             case ROCKET:
-            {      
-                float result_degats = monster.get_Pv() - monster.get_resistance_tr() * Tower::get_power();
-                if (result_degats>0) {
-                    monster.set_Pv(result_degats);
-                }
-                else {
-                    monster.set_Pv(0.0);
+            {   
+                if (tower_react % (int)this->get_cadence() == 0) { 
+                    float degat =monster->get_resistance_tr() * this->get_power();
+                    float result_degats = monster->get_Pv() - degat;
+                    if (result_degats>0) {
+                        monster->set_Pv(result_degats);
                     }
-                break;
+                    else {
+                        monster->set_Pv(0.0);
+                        }
+                    break;
+                    }
             }
             
             case LASER:
             {   
-                float result_degats = monster.get_Pv() - monster.get_resistance_tg() * Tower::get_power();
-                if (result_degats>0) {
-                    monster.set_Pv(result_degats);
-                }
-                else {
-                    monster.set_Pv(0.0);
+                if (tower_react % (int)this->get_cadence() == 0) {
+                    float degat =monster->get_resistance_tr() * this->get_power();
+                    float result_degats = monster->get_Pv() - degat;
+                    if (result_degats>0) {
+                        monster->set_Pv(result_degats);
                     }
-                break;
+                    else {
+                        monster->set_Pv(0.0);
+                        }
+                    break;
+                }
             }
             
             case MACHINEGUN:
             {   
-                float result_degats = monster.get_Pv() - monster.get_resistance_ty() * Tower::get_power();
-                if (result_degats>0) {
-                    monster.set_Pv(result_degats);
-                }
-                else {
-                    monster.set_Pv(0.0);
+                if (tower_react % (int)this->get_cadence() == 0) {
+                    float degat =monster->get_resistance_tr() * this->get_power();
+                    //cout << degat;
+                    float result_degats = monster->get_Pv() - degat;
+                    //cout << "result dégats =" << result_degats << "\n";
+                    if (result_degats>0) {
+                        monster->set_Pv(result_degats);
+                        //cout <<"le monstre a : " << monster->get_Pv() << "pv \n";
                     }
-                break;
+                    else {
+                        monster->set_Pv(0.0);
+                        }
+                    break;
+                }
             }
 
             case HYBRID:
             {   
-                float result_degats = monster.get_Pv() - monster.get_resistance_tb() * Tower::get_power();
-                if (result_degats>0) {
-                    monster.set_Pv(result_degats);
-                }
-                else {
-                    monster.set_Pv(0.0);
+                if (tower_react % (int)this->get_cadence() == 0) {
+                    float degat =monster->get_resistance_tr() * this->get_power();
+                    //cout << degat;
+                    float result_degats = monster->get_Pv() - degat;
+                    //cout << "result dégats =" << result_degats << "\n";
+                    if (result_degats>0) {
+                        monster->set_Pv(result_degats);
+                        //cout <<"le monstre a : " << monster->get_Pv() << "pv \n";
                     }
-                break;
+                    else {
+                        monster->set_Pv(0.0);
+                        }
+                    break;
+                }
             }
         }
     }
-};
+}
             
 
 
@@ -164,8 +182,41 @@ void create_tower(int coord_x, int coord_y, TYPE_TOWER type, Tower new_tower) {
         default:
             break;
     }
-    
     printf("swtich");
+}
 
+void shot_kill_monster(vector<Monster>* wave, vector<Tower>* towers, int tower_react) {
+    int monster_index = 0;
+    int distance=0;
+    for (int i=0; i < towers->size(); i++)  {
+
+        int x_monster = (*wave)[0].get_x();
+        int y_monster = (*wave)[0].get_y();
+
+        int x_tower= (*towers)[i].get_x();
+        int y_tower= (*towers)[i].get_y();
+
+        int dx = abs(x_monster - x_tower);
+        int dy = abs(y_monster - y_tower);
+
+        int min_distance = sqrt( (dx^2) + (dy^2) );
+
+        for (int j=1; j < wave->size() ; j++) {
+
+            x_monster = (*wave)[j].get_x();
+            y_monster = (*wave)[j].get_y();
+
+            dx = abs(x_monster - x_tower);
+            dy = abs(y_monster - y_tower);
+
+            distance= sqrt( (dx^2) + (dy^2) );
+
+            if (distance < min_distance) {
+                min_distance = distance;
+                monster_index = j;
+            }
+        }
+        (*towers)[i].shot( &(*wave)[monster_index] , (*towers)[i].get_type_tower(), tower_react);
+    }
 
 }
