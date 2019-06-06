@@ -1,6 +1,4 @@
 #include "../include/entity.h"
-#include "../include/headers.h"
-
 
 //contructor
 
@@ -26,18 +24,17 @@
 //getters
 	int Entity::get_x() {
 		return coord_x;
-	};
+	}
 
 	int Entity::get_y() {
 		return coord_y;
-	};
+	}
 
 //setters
 	void Entity::set_x(int x) {
 		coord_x = x;
-	};
+	}
 
 	void Entity::set_y(int y) {
 		coord_y=y;
-	};
-
+	}

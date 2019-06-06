@@ -217,9 +217,9 @@ int main(int argc, char *argv[]) {
     Piece *money = new Piece();
 
 
-    vector<Tower> tower_array = vector<Tower>();
     vector<Installation> installation_array = vector<Installation>();
-    vector<Monster*> monster_array = vector<Monster*>();
+    vector<Tower>* tower_array = new vector<Tower>;
+    vector<Monster>* wave = new vector<Monster>;
 
     float new_x = 0;
     float new_y = 0;
@@ -240,27 +240,12 @@ int main(int argc, char *argv[]) {
     char const *tower_price;
     char money_amount[30];
 
-	cout << (*newmap).get_one_node_TabNode(0).get_pos_x() << "\n";
-
     //loadMap
     load_check_Map(ppm_map_name, newmap);
-    cout << newmap->get_width();
 
     for ( unsigned int i=0; i < (*newmap).get_TabNode().size(); i++) {
         check_node_color( (*newmap).get_one_node_TabNode(i), *newmap );
     }
-
-    Node node1 = (*newmap).get_one_node_TabNode(0);
-    cout << node1.get_pos_x();
-    Node node2 = (*newmap).get_one_node_TabNode(1);
-    cout << node2.get_pos_x();
-
-    delete(newmap);
-
-    int x_monster = 14, y_monster = 74;
-
-    Monster *monster_1 = new Monster(x_monster,y_monster,MONSTER1,0,15+0,3,5,0.75,1,1,1.25);
-    monster_array.push_back(monster_1);
 
     /* Initializing SDL */
     if(-1 == SDL_Init(SDL_INIT_VIDEO)) 
@@ -329,13 +314,33 @@ int main(int argc, char *argv[]) {
     /* FACTORY STOCK_MUNITIONS TEXTURE */
     char const *distance_path = "images/distance.png";
     GLuint texture_distance= createTexture(distance_path);
+
+    int monster1_react=0;
+    int monster2_react=0;
+    int tower_react=0;
+    vector<Node> Go_node = newmap->get_TabNode();
+    int x_entry = Go_node[0].get_pos_x();
+    int y_entry = Go_node[0].get_pos_y();
+    wave_monster(wave, x_entry, y_entry);
   
     /* Main loop */
     int loop = 1;
     while(loop) 
     {
-        //usleep(10000);
-        //monster_1->move(monster_1->get_x(), monster_1->get_y(), 385, 74);
+        monster1_react++;
+        monster2_react++;
+        tower_react++;
+        usleep(10000);
+        if( wave_generate(wave, Go_node, monster1_react, monster2_react) == 0 ) {
+            return 0;
+        }
+
+        if (tower_array->size()!=0) {
+            shot_kill_monster(wave, tower_array, tower_react);
+        }
+        kill_monster(wave);
+
+
         /* Recuperation du temps au debut de la boucle */
         Uint32 startTime = SDL_GetTicks();
 
@@ -370,10 +375,10 @@ int main(int argc, char *argv[]) {
         
         glDisable(GL_TEXTURE_2D);
 
-        for (unsigned int i = 0; i<tower_array.size(); i++){
-            TYPE_TOWER type = tower_array[i].get_type_tower();
-            int x = (-1 + 2. * tower_array[i].get_x() / (float) surface->w) * GL_VIEW_WIDTH / 2.;
-            int y = -(-1 + 2. * tower_array[i].get_y() / (float) surface->h) * GL_VIEW_HEIGHT / 2.; 
+        for (unsigned int i = 0; i<tower_array->size(); i++){
+            TYPE_TOWER type = (*tower_array)[i].get_type_tower();
+            int x = (-1 + 2. * (*tower_array)[i].get_x() / (float) surface->w) * GL_VIEW_WIDTH / 2.;
+            int y = -(-1 + 2. * (*tower_array)[i].get_y() / (float) surface->h) * GL_VIEW_HEIGHT / 2.; 
             if(type == ROCKET){
                 glPushMatrix();
                     draw_tower(&texture_red_tower, x, y);
@@ -393,7 +398,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        for (unsigned int i = 0; i<installation_array.size(); i++){
+        for (unsigned int i = 0; i< installation_array.size(); i++){
             TYPE_INSTALL type = installation_array[i].get_type();
             int x = (-1 + 2. * installation_array[i].get_x() / (float) surface->w) * GL_VIEW_WIDTH / 2.;
             int y = -(-1 + 2. * installation_array[i].get_y() / (float) surface->h) * GL_VIEW_HEIGHT / 2.; 
@@ -412,12 +417,20 @@ int main(int argc, char *argv[]) {
             } 
         }
 
-        for (unsigned int i = 0; i<monster_array.size(); i++){
-            int x = (-1 + 2. * monster_array[i]->get_x() / (float) surface->w) * GL_VIEW_WIDTH / 2.;
-            int y = -(-1 + 2. * monster_array[i]->get_y() / (float) surface->h) * GL_VIEW_HEIGHT / 2.; 
+        for (unsigned int i = 0; i< wave->size(); i++){
+            TYPE_MONSTER type =(*wave)[i].get_type();
+            int x = (-1 + 2. * (*wave)[i].get_x() / (float) surface->w) * GL_VIEW_WIDTH / 2.;
+            int y = -(-1 + 2. * (*wave)[i].get_y() / (float) surface->h) * GL_VIEW_HEIGHT / 2.;
+            if (type == MONSTER1) {
                 glPushMatrix();
                     draw_monster(&texture_monster_1, x, y);
                 glPopMatrix();
+            }
+            else {
+                glPushMatrix();
+                    draw_monster(&texture_monster_2, x, y);
+                glPopMatrix();
+            }
         }
 
         glPushMatrix();
@@ -563,26 +576,26 @@ int main(int argc, char *argv[]) {
                     if(e.button.x>=730 && e.button.x<=770 && e.button.y>=30 && e.button.y<=70 && help_needed == true) help_needed = false;
 
                     if(c_pressed){
-                        Tower rocketTower = Tower(e.button.x, e.button.y, ROCKET, 8.0, 2.0, 3.0, 6);
-                        tower_array.push_back(rocketTower);
+                        Tower rocketTower = Tower(e.button.x, e.button.y, ROCKET, 8.0, 20, 3.0, 6);
+                        tower_array->push_back(rocketTower);
                         c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = p_pressed = d_pressed = false;
                     }
 
                     if(s_pressed){
-                        Tower laserTower = Tower(e.button.x, e.button.y, LASER, 5.0, 1.0, 8.0, 5);
-                        tower_array.push_back(laserTower);
+                        Tower laserTower = Tower(e.button.x, e.button.y, LASER, 5.0, 20, 8.0, 5);
+                        tower_array->push_back(laserTower);
                         c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = p_pressed = d_pressed = false;
                     }
 
                     if(h_pressed){
-                        Tower hybridTower = Tower(e.button.x, e.button.y, HYBRID, 3.0, 8.0, 6.0, 6);
-                        tower_array.push_back(hybridTower);
+                        Tower hybridTower = Tower(e.button.x, e.button.y, HYBRID, 3.0, 20, 6.0, 6);
+                        tower_array->push_back(hybridTower);
                         c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = p_pressed = d_pressed = false;
                     }
 
                     if(b_pressed){
-                        Tower machineTower = Tower(e.button.x, e.button.y, MACHINEGUN, 2.0, 2.0, 4.0, 3);
-                        tower_array.push_back(machineTower);
+                        Tower machineTower = Tower(e.button.x, e.button.y, MACHINEGUN, 2.0, 20, 4.0, 3);
+                        tower_array->push_back(machineTower);
                         c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = p_pressed = d_pressed = false;
                     }
 
@@ -674,6 +687,11 @@ int main(int argc, char *argv[]) {
 
     /* Liberation des ressources associees a la SDL */ 
     SDL_Quit();
+
+    // delete (*wave)[i];
+    delete tower_array;
+    delete wave;
+    delete newmap;
 
 	return 1;
 }

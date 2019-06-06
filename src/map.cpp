@@ -29,7 +29,15 @@ char out_color[SIZE_COLOR_TAB] = "";
 
     vector<unsigned int> Map::get_node_color() {
       return node_color;
-    };
+    }
+
+    vector<unsigned int> Map::get_in_node_color() {
+      return in_node_color;
+    }
+
+    vector<unsigned int> Map::get_out_node_color() {
+      return out_node_color;
+    }
 
     vector<Node> Map::get_TabNode() {
       return TabNode;
@@ -54,18 +62,18 @@ char out_color[SIZE_COLOR_TAB] = "";
 
    void Map::set_width(unsigned int newvalue) {
       width = newvalue;
-    };
+    }
     
     void Map::set_height(unsigned int newvalue) {
       height = newvalue;
-    };
+    }
      
     void Map::set_data(vector<unsigned int> newvalue) {
       data = newvalue;
-    };
+    }
 
     void Map::set_path_pixel(vector<Entity> path) {
-      path_pixel = path ;
+      path_pixel = path;
     }
 
     void Map::set_path_one_pixel(Entity pixel) {
@@ -74,7 +82,15 @@ char out_color[SIZE_COLOR_TAB] = "";
 
     void Map::set_node_color(vector<unsigned int> newvalue) {
       node_color = newvalue;
-    };
+    }
+
+    void Map::set_in_node_color( vector<unsigned int> newvalue) {
+      in_node_color = newvalue;
+    }
+
+    void Map::set_out_node_color(vector<unsigned int> newvalue) {
+      out_node_color = newvalue;
+    }
 
     void Map::set_TabNode(vector<Node> newTab) {
       TabNode = newTab;
@@ -193,10 +209,122 @@ bool check_path_color(int x, int y, Map map) {
    return true;
 }
 
+bool check_in_node_color(int x, int y, Map map) {
+    int width=map.get_width();
+        int position_rgb =(width*y + x)*3 ;
+        unsigned int color_r = map.get_one_value_data(position_rgb);
+        unsigned int color_g = map.get_one_value_data(position_rgb+1);
+        unsigned int color_b = map.get_one_value_data(position_rgb+2);
+        cout << color_r << " " << color_g << " " << color_b << "\n";
+        cout << x << " " << y << "\n";
+        if ( (color_r!=(map.get_in_node_color())[0]) &&
+             (color_g!=(map.get_in_node_color())[1]) && 
+             (color_b!=(map.get_in_node_color())[2]) ) {
+            cout << "the pixel does not correspond to the path of map \n";
+            return false;
+        }
+   return true;
+}
+
+bool check_node_color2(int x, int y, Map map) {
+    int width=map.get_width();
+        int position_rgb =(width*y + x)*3 ;
+        unsigned int color_r = map.get_one_value_data(position_rgb);
+        unsigned int color_g = map.get_one_value_data(position_rgb+1);
+        unsigned int color_b = map.get_one_value_data(position_rgb+2);
+        cout << color_r << " " << color_g << " " << color_b << "\n";
+        cout << x << " " << y << "\n";
+        if ( (color_r!=(map.get_node_color())[0]) &&
+             (color_g!=(map.get_node_color())[1]) && 
+             (color_b!=(map.get_node_color())[2]) ) {
+            cout << "the pixel does not correspond to the path of map \n";
+            return false;
+        }
+   return true;
+}
 
 
+bool check_out_node_color(int x, int y, Map map) {
+    int width=map.get_width();
+        int position_rgb =(width*y + x)*3 ;
+        unsigned int color_r = map.get_one_value_data(position_rgb);
+        unsigned int color_g = map.get_one_value_data(position_rgb+1);
+        unsigned int color_b = map.get_one_value_data(position_rgb+2);
+        cout << color_r << " " << color_g << " " << color_b << "\n";
+        cout << x << " " << y << "\n";
+        if ( (color_r!=(map.get_out_node_color())[0]) &&
+             (color_g!=(map.get_out_node_color())[1]) && 
+             (color_b!=(map.get_out_node_color())[2]) ) {
+            cout << "the pixel does not correspond to the path of map \n";
+            return false;
+        }
+   return true;
+}
+
+
+// bool bressenham(Node point1, Node point2, Map* map) {
+//     Entity *pixel = new Entity;
+//     cout << "yo";
+//     int x1 = point1.get_pos_x();
+//     cout << x1;
+//     int y1 = point1.get_pos_y();
+//     cout << y1;
+//     int x2 = point2.get_pos_x();
+//     int y2 = point2.get_pos_y();
+//     pixel->set_x(x1);
+//     pixel->set_y(y1);
+//     map->set_path_one_pixel(*pixel);
+
+//     //Bressenham Algorithm (optimized)
+//     int   e = x2 - x1, //-e(0,1)
+//           dx  = e*2, //-e(0,1)
+//           dy  = (y2 - y1)*2; //e(1,0)
+//     if ( x1<= x2) {
+//         while (x1 <= x2) {
+//             //tracer segment
+//             x1 = x1+1; //next column pixel
+//             if ( (e - dy) <= 0 ) { //next pixel error on the same range 
+//                 y1 = y1 +1; //Choose the next pixel on the superior range
+//                 e = e + dx; //ajusts the commited error on the new range
+//                 if ( check_path_color(x1,y1, *map) == false ) { //check if the 
+//                     cout << "You quit the path! Game Over";
+//                     return false;
+//                 }
+//             }
+//                     pixel->set_x(x1);
+//                     pixel->set_x(y1);
+//                     map->set_path_one_pixel(*pixel);
+//         }
+//     }
+//     else {
+//         while (x1 >= x2) {
+//             //tracer segment
+//             x1 = x1-1; //next column pixel
+//             if ( (e - dy) <= 0 ) { //next pixel error on the same range 
+//                 y1 = y1 +1; //Choose the next pixel on the superior range
+//                 e = e + dx; //ajusts the commited error on the new range
+//                 if ( check_path_color(x1,y1, *map) == false ) { //check if the 
+//                     cout << "You quit the path! Game Over";
+//                     delete pixel;
+//                     return false;
+//                 }
+//                 else {
+//                     pixel->set_x(x1);
+//                     pixel->set_y(y1);
+//                     map->set_path_one_pixel(*pixel);
+//                 }
+//             }
+//         }
+//     }
+
+//     delete pixel;
+//     return true;
+// }
+
+
+//we suppose, we just have horizontal and vertical movement
 bool bressenham(Node point1, Node point2, Map* map) {
-    Entity *pixel;
+    Entity *pixel = new Entity;
     cout << "yo";
     int x1 = point1.get_pos_x();
     cout << x1;
@@ -208,48 +336,80 @@ bool bressenham(Node point1, Node point2, Map* map) {
     pixel->set_y(y1);
     map->set_path_one_pixel(*pixel);
 
-    //Bressenham Algorithm (optimized)
-    int   e = x2 - x1, //-e(0,1)
-          dx  = e*2, //-e(0,1)
-          dy  = (y2 - y1)*2; //e(1,0)
-    if ( x1<= x2) {
-        while (x1 <= x2) {
-            //tracer segment
-            x1 = x1+1; //next column pixel
-            if ( (e - dy) <= 0 ) { //next pixel error on the same range 
-                y1 = y1 +1; //Choose the next pixel on the superior range
-                e = e + dx; //ajusts the commited error on the new range
-                if ( check_path_color(x1,y1, *map) == false ) { //check if the 
-                    cout << "You quit the path! Game Over";
-                    return false;
-                }
-                else {
-                    pixel->set_x(x1);
-                    pixel->set_x(y1);
-                    map->set_path_one_pixel(*pixel);
-                }
-            }
-        }
-    }
-    else {
-        while (x1 >= x2) {
-            //tracer segment
-            x1 = x1-1; //next column pixel
-            if ( (e - dy) <= 0 ) { //next pixel error on the same range 
-                y1 = y1 +1; //Choose the next pixel on the superior range
-                e = e + dx; //ajusts the commited error on the new range
-                if ( check_path_color(x1,y1, *map) == false ) { //check if the 
-                    cout << "You quit the path! Game Over";
-                    return false;
-                }
-                else {
-                    pixel->set_x(x1);
-                    pixel->set_y(y1);
-                    map->set_path_one_pixel(*pixel);
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
+        if ( dx <= 2 ) {
+            cout << dx << "\n";
+            x1=x2;
+            if (y1<y2) {
+                while ( y1 < y2 ) {
+                    y1=y1-1;
+                    if ( check_path_color(x1,y1,*map)!=true &&
+                          check_in_node_color(x1,y1,*map)!=true &&
+                          check_out_node_color(x1,y1,*map)!=true &&
+                          check_node_color2(x1,y1,*map)!=true ) {
+                            cout << "there is a problem";
+                            return false;
+                          }
+                    else {
+                      pixel->set_y(y1);
+                      map->set_path_one_pixel(*pixel);
+                    }
                 }
             }
+            else {
+                while ( y1 > y2 ) {
+                    y1=y1+1;
+                    if ( check_path_color(x1,y1,*map)!=true &&
+                          check_in_node_color(x1,y1,*map)!=true &&
+                          check_out_node_color(x1,y1,*map)!=true &&
+                          check_node_color2(x1,y1,*map)!=true ) {
+                            cout << "there is a problem";
+                            return false;
+                          }
+                    else {
+                      pixel->set_y(y1);
+                      map->set_path_one_pixel(*pixel);
+                    }
+                }
+              }
         }
-    }
+        if( dy <= 2) {
+            cout << dy << "\n";
+            y1=y2;
+            if (x1<x2) {
+                while ( x1 < x2 ) {
+                    x1=x1+1;
+                    if ( check_path_color(x1,y1,*map)!=true &&
+                          check_in_node_color(x1,y1,*map)!=true &&
+                          check_out_node_color(x1,y1,*map)!=true &&
+                          check_node_color2(x1,y1,*map)!=true ) {
+                            cout << "there is a problem";
+                            return false;
+                          }
+                    else {
+                      pixel->set_y(x1);
+                      map->set_path_one_pixel(*pixel);
+                    }
+                }
+            }
+            else {
+              while ( x1 < x2 ) { 
+                  x1=x1-1;
+                  if ( check_path_color(x1,y1,*map)!=true &&
+                        check_in_node_color(x1,y1,*map)!=true &&
+                        check_out_node_color(x1,y1,*map)!=true &&
+                        check_node_color2(x1,y1,*map)!=true ) {
+                          cout << "there is a problem";
+                          return false;
+                        }
+                  else {
+                    pixel->set_y(x1);
+                    map->set_path_one_pixel(*pixel);
+                  }
+              }
+            }
+        }
     return true;
 }
 
@@ -393,6 +553,7 @@ int check_itd(char const *nameFile, Map *map){
                             enter_color_stock.push_back(number2);
                             enter_color_stock.push_back(number3);
                             cout<< number1 << " " << number2 << " " << number3 << "\n";
+                            map->set_in_node_color(enter_color_stock);
                         }
                         
                         //stock the rgb component of exit
@@ -400,6 +561,7 @@ int check_itd(char const *nameFile, Map *map){
                             exit_color_stock.push_back(number1);
                             exit_color_stock.push_back(number2);
                             exit_color_stock.push_back(number3);
+                            map->set_in_node_color(enter_color_stock);
                         }
                     }
                     

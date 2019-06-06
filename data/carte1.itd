@@ -1,11 +1,11 @@
 @ITD 1
 # premiere ligne de commentaire
 carte ./data/carte1.ppm
-chemin 194 134 76
+chemin 195 134 70
 noeud 0 0 0
-construct 65 136 68
-in 98 70 10
-out 0 87 39
+construct 62 137 65
+in 99 70 0
+out 0 88 37
 7
 0 1 14 74 1
 1 3 385 74 0 2

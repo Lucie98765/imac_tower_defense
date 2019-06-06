@@ -24,7 +24,7 @@
 
 //getters
     TYPE_MONSTER Monster::get_type() {
-        return type;
+        return this->type;
     }
 
     int Monster::get_level() {
@@ -57,6 +57,10 @@
 
     float Monster::get_resistance_tb() {
         return resistance_tb;
+    }
+
+    int Monster::get_walk_counter() {
+        return walk_counter;
     }
 
 
@@ -97,6 +101,10 @@
         resistance_tb = nwResistance;
     }
 
+    void Monster::set_walk_counter(int i) {
+        walk_counter=i;
+    }
+
 //void Monster::seDeplacer(int move_x, int move_y) {
     //tant que le noeud n'est pas atteint, avancé soit en x sans en y
     //calculer la fonction affine en fonction des noeuds
@@ -106,6 +114,8 @@
     //calculer le chemin le plus court en distance et en temps
     //choisir en conséquence
 
+
+// <=> bressenham
     void Monster::move(int x1, int y1, int x2, int y2) {
         cout << "houston we have a pb\n";
         if ( abs(x1 - x2) <= 2 ) {
@@ -114,14 +124,14 @@
             if (y1<y2)
                 while ( y1 <= y2 ) {
                     sleep(this->get_speed());
-                    y1=y1-1;
+                    y1=y1+1;
                     set_y(y1);
                     cout << "( " << this->get_x() << "," <<  this->get_y() << "\n";
                 }
             else {
                 while ( y1>=y2 ) {
                     sleep(this->get_speed());
-                    y1=y1+1;
+                    y1=y1-1;
                     set_y(y1);
                     cout << "( " << this->get_x() << "," <<  this->get_y() << " )\n";
                 }
@@ -147,16 +157,38 @@
             }
         }
     }
-	
-    void Monster::gauge_Pv() {
-        //Partie DSL 
-
-        //Howmany pixel represent
-        int subdiv = get_Pv();
-    };
 
 
-void create_monster(int coord_x, int coord_y, TYPE_MONSTER type, Monster new_monster, int level) {
+//move2
+    void Monster::move2(int monster_x, int monster_y, int x2, int y2) {
+        int dx= abs(monster_x-x2);
+        int dy= abs(monster_y-y2);
+        if ( dx <= 2) {
+            this->set_x(x2);
+            if (monster_y<y2) {
+                    monster_y++;
+                    this->set_y(monster_y);
+                }
+            else {
+                    monster_y--;
+                    this->set_y(monster_y);
+                }
+        }
+        if ( dy <= 2) {
+            this->set_y(y2);
+            if (monster_x<x2) {
+                monster_x++;
+                set_x(monster_x);
+                }
+            else {
+                monster_x--;
+                set_x(monster_x);
+            }
+        }
+    }
+
+
+Monster create_monster(int coord_x, int coord_y, TYPE_MONSTER type, Monster new_monster, int level) {
     //initiazition monster according to chosen parameters 
     switch (type)
     {
@@ -180,6 +212,65 @@ void create_monster(int coord_x, int coord_y, TYPE_MONSTER type, Monster new_mon
         default:
             break;
     }
-    
+    return new_monster;
     printf("swtich Monster");
+}
+
+void wave_monster(vector<Monster>* wave,int init_x, int init_y) {
+    int number1 = rand() % 9;
+    for (int i=0; i<10; i++){
+            Monster monster1(init_x-30*i,init_y,MONSTER1,0,15,2,5,0.75,1,1,1.25);
+            Monster monster2(init_x-30*i,init_y,MONSTER2,0,20,2,5,1.25,0.8,1,0.8);
+        if (i<number1) {
+            wave->push_back(monster1);
+        }
+        else {
+            wave->push_back(monster2);
+        }
+    }
+}
+
+int wave_generate(vector<Monster>* wave, vector<Node> Go_node, int monster1_react, int monster2_react) {
+            for (int i=0; i<wave->size();i++) {
+            TYPE_MONSTER type = (*wave)[i].get_type();
+            if (type == MONSTER1) {
+                int counter_node=(*wave)[i].get_walk_counter();
+                if ( monster1_react % int((*wave)[i].get_speed()) == 0) {
+                    if ((*wave)[i].get_x() == Go_node[counter_node].get_pos_x() &&
+                        (*wave)[i].get_y() == Go_node[counter_node].get_pos_y()) {
+                            counter_node++;
+                            (*wave)[i].set_walk_counter(counter_node);
+                            if (counter_node == Go_node.size()) {
+                                cout << "GAME OVER";
+                                return 0;
+                            }
+                        }
+                        (*wave)[i].move2((*wave)[i].get_x(), (*wave)[i].get_y(), Go_node[counter_node].get_pos_x(), Go_node[counter_node].get_pos_y());
+                }
+            }
+            if (type == MONSTER2) {
+                int counter_node=(*wave)[i].get_walk_counter();
+                if ( monster2_react % int((*wave)[i].get_speed()) == 0) {
+                    if ((*wave)[i].get_x() == Go_node[counter_node].get_pos_x() &&
+                        (*wave)[i].get_y() == Go_node[counter_node].get_pos_y()) {
+                            counter_node++;
+                            (*wave)[i].set_walk_counter(counter_node);
+                            if (counter_node == Go_node.size()) {
+                                cout << "GAME OVER";
+                                return 0;
+                            }
+                        }
+                        (*wave)[i].move2((*wave)[i].get_x(), (*wave)[i].get_y(), Go_node[counter_node].get_pos_x(), Go_node[counter_node].get_pos_y());
+                }
+            }
+        }
+}
+
+void kill_monster(vector<Monster>* monster){
+    for (int i=0; i < monster->size() ; i++) {
+        if ( (*monster)[i].get_Pv() == 0) {
+            monster->erase(monster->begin() + i);
+            i=0;
+        }
+    }
 }
