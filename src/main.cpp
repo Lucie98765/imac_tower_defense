@@ -6,7 +6,7 @@
 #include "../include/texture.h"
 #include "../include/monster.h"
 #include "../include/entity.h"
-
+#include "../include/money.h"
 
 /* Dimensions initiales et titre de la fenetre */
 static const unsigned int WINDOW_WIDTH = 800;
@@ -30,13 +30,12 @@ bool s_pressed = false;
 bool h_pressed = false;
 bool b_pressed = false;
 bool r_pressed = false;
+bool p_pressed = false;
+bool d_pressed = false;
 int nb_red_tower = 0;
 int nb_blue_tower = 0;
 int nb_green_tower = 0;
 int nb_yellow_tower = 0;
-
-
-
 
 void reshape(SDL_Surface** surface, unsigned int width, unsigned int height)
 { 
@@ -60,34 +59,6 @@ void reshape(SDL_Surface** surface, unsigned int width, unsigned int height)
 
 }
 
-
-void drawSquare(float x, float y, GLuint* texture) {
-
-    if (texture != NULL){   
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, *texture);
-        glBegin(GL_QUADS);
-            glColor3ub(255,255,255);
-            glTexCoord2f(0, 1);
-            glVertex2f( x-15, y-30);
-        
-            glTexCoord2f(1, 1);
-            glVertex2f( x+15, y-30);
-        
-            glTexCoord2f(1, 0);
-            glVertex2f( x+15, y+30);
-        
-            glTexCoord2f(0, 0);
-            glVertex2f( x-15, y+30);
-        glEnd();
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL_TEXTURE_2D);
-    } else {
-        printf("display of cursor failed\n");
-    }
-
-}
-
 void draw_help(GLuint* texture_help){
     if (NULL != texture_help){
         glEnable(GL_TEXTURE_2D);
@@ -95,16 +66,16 @@ void draw_help(GLuint* texture_help){
         glBegin(GL_QUADS);
             glColor3ub(255,255,255);
             glTexCoord2f(0, 1);
-            glVertex2f(-400., -300.);
+            glVertex2f(-390., -300.);
         
             glTexCoord2f(1, 1);
-            glVertex2f(-370., -300.);
+            glVertex2f(-375., -300.);
         
             glTexCoord2f(1, 0);
-            glVertex2f(-370., -270.);
+            glVertex2f(-375., -270.);
         
             glTexCoord2f(0, 0);
-            glVertex2f(-400., -270.);
+            glVertex2f(-390., -270.);
         glEnd();
 
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -140,7 +111,6 @@ void open_help(GLuint* texture_wdw){
         printf("display of help window failed\n");
     }
 }
-
 
 void draw_tower(GLuint* texture_tower, int x, int y){
     if (NULL != texture_tower){
@@ -196,6 +166,33 @@ void draw_monster(GLuint* texture_monster, int x, int y){
     }
 }
 
+void draw_installation(GLuint* texture_inst, int x, int y){
+    if (NULL != texture_inst){
+        
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, *texture_inst);
+        glBegin(GL_QUADS);
+            glColor3ub(255,255,255);
+            glTexCoord2f(0, 1);
+            glVertex2f(x-30, y-15.);
+        
+            glTexCoord2f(1, 1);
+            glVertex2f(x+30., y-15.);
+        
+            glTexCoord2f(1, 0);
+            glVertex2f(x+30., y+15.);
+        
+            glTexCoord2f(0, 0);
+            glVertex2f(x-30., y+15.);
+        glEnd();
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
+    } else {
+        printf("display of installation failed\n");
+    }
+}
+
 void write(int x, int y,  char const *string) {
 
         char const *c;
@@ -211,24 +208,18 @@ void write(int x, int y,  char const *string) {
 
 
 
-
-
-
-
-
-
-
 int main(int argc, char *argv[]) {
 
 	Map * newmap = new Map;
 	char const *itd_map_name = "data/carte1.itd";
 	char const *ppm_map_name = "images/carte1.ppm";
 
+    Piece *money = new Piece();
+
 
     vector<Tower> tower_array = vector<Tower>();
     vector<Installation> installation_array = vector<Installation>();
     vector<Monster*> monster_array = vector<Monster*>();
-
 
     float new_x = 0;
     float new_y = 0;
@@ -241,14 +232,13 @@ int main(int argc, char *argv[]) {
 
     unsigned int x_mouse = 0, y_mouse = 0;
 
-
     char const *tower_title;
     char const *tower_type;
     char const *tower_power;
     char const *tower_scope;
     char const *tower_cadence;
     char const *tower_price;
-
+    char money_amount[30];
 
 	cout << (*newmap).get_one_node_TabNode(0).get_pos_x() << "\n";
 
@@ -266,22 +256,18 @@ int main(int argc, char *argv[]) {
     cout << node2.get_pos_x();
 
     delete(newmap);
-    
 
     int x_monster = 14, y_monster = 74;
 
     Monster *monster_1 = new Monster(x_monster,y_monster,MONSTER1,0,15+0,3,5,0.75,1,1,1.25);
     monster_array.push_back(monster_1);
 
-
-
-
     /* Initializing SDL */
     if(-1 == SDL_Init(SDL_INIT_VIDEO)) 
     {
         fprintf(
             stderr, 
-            "Impossible d'initialiser la SDL. Fin du programme.\n");
+            "Fail initializing SDL.\n");
         exit(EXIT_FAILURE);
     }
     /* Openning a window */
@@ -295,17 +281,6 @@ int main(int argc, char *argv[]) {
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	//for ( unsigned int j=1; j < (*newmap).get_TabNode().size(); j++) {
-
-
-		
-
-		/*if (bressenham(node1, node2, newmap) != true) {
-			cout << "Y a encore du chemin à faire.. lol on check le chemin";
-		}*/
-	
-
 
     /* MAP TEXTURE */
     char const *image_path = "images/background1.png";
@@ -335,10 +310,6 @@ int main(int argc, char *argv[]) {
     char const *yellow_tower_path = "images/bo_tower.png";
     GLuint texture_yellow_tower = createTexture(yellow_tower_path);
 
-    /* CURSOR TEXTURE */
-    char const *cursor_path = "images/cursor.png";
-    GLuint texture_cursor = createTexture(cursor_path);
-
     /* MONSTER 1 TEXTURE */
     char const *monster_1_path = "images/monster_1.png";
     GLuint texture_monster_1 = createTexture(monster_1_path);
@@ -351,9 +322,13 @@ int main(int argc, char *argv[]) {
     char const *rythm_path = "images/cadence.png";
     GLuint texture_rythm= createTexture(rythm_path);
 
+    /* FACTORY ARMAMENT/POWER TEXTURE */
+    char const *power_path = "images/power.png";
+    GLuint texture_power= createTexture(power_path);
 
-    
-
+    /* FACTORY STOCK_MUNITIONS TEXTURE */
+    char const *distance_path = "images/distance.png";
+    GLuint texture_distance= createTexture(distance_path);
   
     /* Main loop */
     int loop = 1;
@@ -395,92 +370,6 @@ int main(int argc, char *argv[]) {
         
         glDisable(GL_TEXTURE_2D);
 
-
-
-        if (c_pressed){
-            glPushMatrix();
-                drawSquare(new_x, new_y, &texture_red_tower);
-            glPopMatrix();
-            tower_title = "CHIHIRO";
-            tower_type = "Type : rocket";
-            tower_power = "Power : 8";
-            tower_scope = "Scope : 2";
-            tower_cadence = "Cadence : 2";
-            tower_price = "Price : 5";
-        } else if ( s_pressed){
-            glPushMatrix();
-                drawSquare(new_x, new_y, &texture_green_tower);
-            glPopMatrix();
-            tower_title = "SUSWATARI";
-            tower_type = "Type : laser";
-            tower_power = "Power : 5";
-            tower_scope = "Scope : 1";
-            tower_cadence = "Cadence : 8";
-            tower_price = "Price : 5";
-        } else if (h_pressed){
-            glPushMatrix();
-                drawSquare(new_x, new_y, &texture_blue_tower);
-            glPopMatrix();
-            tower_title = "HAKU";
-            tower_type = "Type : hybrid";
-            tower_power = "Power : 3";
-            tower_scope = "Scope : 8";
-            tower_cadence = "Cadence : 6";
-            tower_price = "Price : 6";
-        } else if (b_pressed){
-            glPushMatrix();
-                drawSquare(new_x, new_y, &texture_yellow_tower);
-            glPopMatrix();
-            tower_title = "BO";
-            tower_type = "Type : machine-gun";
-            tower_power = "Power : 2";
-            tower_scope = "Scope : 2";
-            tower_cadence = "Cadence : 4";
-            tower_price = "Price : 3";
-        } else if (r_pressed){
-            glPushMatrix();
-                drawSquare(new_x, new_y, &texture_rythm);
-            glPopMatrix();
-            tower_title = "INSTALLATION";
-            tower_type = "Type : rythm";
-            tower_power = "Increases cadence";
-            tower_scope = "";
-            tower_cadence = "";
-            tower_price = "";
-        } else {
-            glPushMatrix();
-                drawSquare(new_x, new_y, &texture_cursor);
-            glPopMatrix();
-            tower_title = "";
-            tower_type = "";
-            tower_power = "";
-            tower_scope = "";
-            tower_cadence = "";
-            tower_price = "";
-        }
-        if(tower_title!=""){
-            write(250, 280, tower_title);
-            write(250, 260, tower_type);
-            write(250, 240, tower_power);
-            write(250, 220, tower_scope);
-            write(250, 200, tower_cadence);
-            write(250, 180, tower_price);
-        }
-        
-
-        
-
-
-        glPushMatrix();
-            draw_help(&texture_help_button);
-        glPopMatrix();
-
-       
-
-        char const *string = "bonsoir je suis un texte";
-        
-        //write(200, 200, string);
-
         for (unsigned int i = 0; i<tower_array.size(); i++){
             TYPE_TOWER type = tower_array[i].get_type_tower();
             int x = (-1 + 2. * tower_array[i].get_x() / (float) surface->w) * GL_VIEW_WIDTH / 2.;
@@ -510,7 +399,15 @@ int main(int argc, char *argv[]) {
             int y = -(-1 + 2. * installation_array[i].get_y() / (float) surface->h) * GL_VIEW_HEIGHT / 2.; 
             if(type == RADAR){
                 glPushMatrix();
-                    draw_tower(&texture_rythm, x, y);
+                    draw_installation(&texture_distance, x, y);
+                glPopMatrix();
+            } else if(type == FACTORY_ARMAMENT){
+                glPushMatrix();
+                    draw_installation(&texture_power, x, y);
+                glPopMatrix();
+            } else if(type == STOCK_MUNITIONS){
+                glPushMatrix();
+                    draw_installation(&texture_rythm, x, y);
                 glPopMatrix();
             } 
         }
@@ -523,13 +420,98 @@ int main(int argc, char *argv[]) {
                 glPopMatrix();
         }
 
-
-
         glPushMatrix();
             draw_help(&texture_help_button);
         glPopMatrix();
 
+        if (c_pressed){
+            glPushMatrix();
+                draw_tower(&texture_red_tower,new_x, new_y);
+            glPopMatrix();
+            tower_title = "CHIHIRO";
+            tower_type = "Type : rocket";
+            tower_power = "Power : 8";
+            tower_scope = "Scope : 2";
+            tower_cadence = "Cadence : 2";
+            tower_price = "Price : 5";
+        } else if ( s_pressed){
+            glPushMatrix();
+                draw_tower(&texture_green_tower, new_x, new_y);
+            glPopMatrix();
+            tower_title = "SUSWATARI";
+            tower_type = "Type : laser";
+            tower_power = "Power : 5";
+            tower_scope = "Scope : 1";
+            tower_cadence = "Cadence : 8";
+            tower_price = "Price : 5";
+        } else if (h_pressed){
+            glPushMatrix();
+                draw_tower(&texture_blue_tower, new_x, new_y);
+            glPopMatrix();
+            tower_title = "HAKU";
+            tower_type = "Type : hybrid";
+            tower_power = "Power : 3";
+            tower_scope = "Scope : 8";
+            tower_cadence = "Cadence : 6";
+            tower_price = "Price : 6";
+        } else if (b_pressed){
+            glPushMatrix();
+                draw_tower(&texture_yellow_tower, new_x, new_y);
+            glPopMatrix();
+            tower_title = "BO";
+            tower_type = "Type : machine-gun";
+            tower_power = "Power : 2";
+            tower_scope = "Scope : 2";
+            tower_cadence = "Cadence : 4";
+            tower_price = "Price : 3";
+        } else if (r_pressed){
+            glPushMatrix();
+                draw_installation(&texture_rythm, new_x, new_y);
+            glPopMatrix();
+            tower_title = "INSTALLATION";
+            tower_type = "Type : cadence";
+            tower_power = "Increases rate";
+            tower_scope = "of fire";
+            tower_cadence = "";
+            tower_price = "";
+        } else if (p_pressed){
+            glPushMatrix();
+                draw_installation(&texture_power, new_x, new_y);
+            glPopMatrix();
+            tower_title = "INSTALLATION";
+            tower_type = "Type : power";
+            tower_power = "Increases power";
+            tower_scope = "of shots";
+            tower_cadence = "";
+            tower_price = "";
+        } else if (d_pressed){
+            glPushMatrix();
+                draw_installation(&texture_distance, new_x, new_y);
+            glPopMatrix();
+            tower_title = "INSTALLATION";
+            tower_type = "Type : distance";
+            tower_power = "Increases scope";
+            tower_scope = "of fire";
+            tower_cadence = "";
+            tower_price = "";
+        } else {
+            tower_title = "";
+            tower_type = "";
+            tower_power = "";
+            tower_scope = "";
+            tower_cadence = "";
+            tower_price = "";
+        }
 
+        if(tower_title!=""){
+            write(250, 280, tower_title);
+            write(250, 260, tower_type);
+            write(250, 240, tower_power);
+            write(250, 220, tower_scope);
+            write(250, 200, tower_cadence);
+            write(250, 180, tower_price);
+        }
+        
         if(help_needed){
             glPushMatrix();
                 open_help(&texture_help_wdw);
@@ -537,14 +519,9 @@ int main(int argc, char *argv[]) {
         }
 
 
-
-
-
-
-
-
-
-
+        int int_money = money->get_money();
+        sprintf(money_amount,"Money amount : %d", int_money);
+        write(250, -280, money_amount);
 
         /* Echange du front et du back buffer : mise a jour de la fenetre */
         SDL_GL_SwapBuffers();
@@ -580,89 +557,82 @@ int main(int argc, char *argv[]) {
                 
                 /* Clic souris */
                 case SDL_MOUSEBUTTONUP:
-                    if (e.button.button == SDL_BUTTON_LEFT){
-                        printf("clic en (%d, %d)\n", e.button.x, e.button.y);
-                    } 
 
-                    if ((e.button.x <=30) && (e.button.x <=30)) help_needed = true;
+                    if ((e.button.x <= 30) && (e.button.y >=570)) help_needed = true;
 
-                    if(e.button.x>=730 && e.button.x<=770 && e.button.y>=30 && e.button.y<=70 && help_needed == true){
-                        help_needed = false;
-                    }
-
-
-
-
+                    if(e.button.x>=730 && e.button.x<=770 && e.button.y>=30 && e.button.y<=70 && help_needed == true) help_needed = false;
 
                     if(c_pressed){
                         Tower rocketTower = Tower(e.button.x, e.button.y, ROCKET, 8.0, 2.0, 3.0, 6);
                         tower_array.push_back(rocketTower);
-                        c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = false;
+                        c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = p_pressed = d_pressed = false;
                     }
 
                     if(s_pressed){
                         Tower laserTower = Tower(e.button.x, e.button.y, LASER, 5.0, 1.0, 8.0, 5);
                         tower_array.push_back(laserTower);
-                        c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = false;
+                        c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = p_pressed = d_pressed = false;
                     }
 
                     if(h_pressed){
                         Tower hybridTower = Tower(e.button.x, e.button.y, HYBRID, 3.0, 8.0, 6.0, 6);
                         tower_array.push_back(hybridTower);
-                        c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = false;
+                        c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = p_pressed = d_pressed = false;
                     }
 
                     if(b_pressed){
                         Tower machineTower = Tower(e.button.x, e.button.y, MACHINEGUN, 2.0, 2.0, 4.0, 3);
                         tower_array.push_back(machineTower);
-                        c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = false;
+                        c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = p_pressed = d_pressed = false;
                     }
 
                     if(r_pressed){
-                        Installation radarInst = Installation(e.button.x, e.button.y, RADAR, 15);
+                        Installation radarInst = Installation(e.button.x, e.button.y, STOCK_MUNITIONS, 18);
                         installation_array.push_back(radarInst);
-                        c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = false;
+                        c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = p_pressed = d_pressed = false;
+                    }
+
+                    if(p_pressed){
+                        Installation powerInst = Installation(e.button.x, e.button.y, FACTORY_ARMAMENT, 20);
+                        installation_array.push_back(powerInst);
+                        c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = p_pressed = d_pressed = false;
+                    }
+
+                    if(d_pressed){
+                        Installation distanceInst = Installation(e.button.x, e.button.y, RADAR, 25);
+                        installation_array.push_back(distanceInst);
+                        c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = p_pressed = d_pressed = false;
                     }
 
                     break;
 
-                
                 /* Touche clavier */
                 case SDL_KEYDOWN:
-                    printf("touche pressee (code = %d)\n", e.key.keysym.sym);
                     if(99 == e.key.keysym.sym){
-                        printf("c pressed\n");
                         c_pressed = true;
-                        s_pressed = h_pressed = b_pressed = r_pressed = false;
-                        drawSquare(new_x, new_y, &texture_red_tower);
+                        s_pressed = h_pressed = b_pressed = r_pressed = p_pressed = d_pressed = false;
                     } else if(115 == e.key.keysym.sym){
-                        printf("s pressed\n");
                         s_pressed = true;
-                        c_pressed = h_pressed = b_pressed = r_pressed = false;
-                        drawSquare(new_x, new_y, &texture_green_tower);
+                        c_pressed = h_pressed = b_pressed = r_pressed = p_pressed = d_pressed = false;
                     } else if(104 == e.key.keysym.sym){
-                        printf("h pressed\n");
                         h_pressed = true;
-                        c_pressed = s_pressed = b_pressed = r_pressed = false;
-                        drawSquare(new_x, new_y, &texture_blue_tower);
+                        c_pressed = s_pressed = b_pressed = r_pressed = p_pressed = d_pressed = false;
                     } else if(98 == e.key.keysym.sym){
-                        printf("b pressed\n");
                         b_pressed = true;
-                        c_pressed = s_pressed = h_pressed = r_pressed =false;
-                        drawSquare(new_x, new_y, &texture_yellow_tower);
+                        c_pressed = s_pressed = h_pressed = r_pressed = p_pressed = d_pressed = false;
                     } else if(114 == e.key.keysym.sym){
-                        printf("r pressed\n");
                         r_pressed = true;
-                        c_pressed = s_pressed = h_pressed = b_pressed = false;
-                        drawSquare(new_x, new_y, &texture_yellow_tower);
+                        c_pressed = s_pressed = h_pressed = b_pressed = p_pressed = d_pressed = false;
+                    } else if(112 == e.key.keysym.sym){
+                        p_pressed = true;
+                        c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = d_pressed = false;
+                    } else if(100 == e.key.keysym.sym){
+                        d_pressed = true;
+                        c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = p_pressed = false;
                     } else {
-                        printf("no tower\n");
-                        c_pressed = s_pressed = h_pressed = b_pressed = false;
-                        drawSquare(new_x, new_y, &texture_cursor);
+                        c_pressed = s_pressed = h_pressed = b_pressed = r_pressed = p_pressed = false;
                     }
                     break;
-
-
 
                 case SDL_MOUSEMOTION:
 
@@ -671,8 +641,7 @@ int main(int argc, char *argv[]) {
 
                     new_x = (-1 + 2. * x_mouse / (float) surface->w) * GL_VIEW_WIDTH / 2.;
                     new_y = -(-1 + 2. * y_mouse / (float) surface->h) * GL_VIEW_HEIGHT / 2.; 
-                    
-                    
+                          
                 default:
                     break;
 
@@ -696,8 +665,9 @@ int main(int argc, char *argv[]) {
     free_texture(texture_green_tower);
     free_texture(texture_blue_tower);
     free_texture(texture_yellow_tower);
-    free_texture(texture_cursor);
     free_texture(texture_rythm);
+    free_texture(texture_power);
+    free_texture(texture_distance);
 
     glDisable(GL_BLEND);
 
